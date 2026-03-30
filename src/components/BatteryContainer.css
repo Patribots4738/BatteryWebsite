@@ -1,0 +1,9 @@
+.battery-container {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 1em;
+    padding: 1%;
+    padding-top: 2%;
+    height: 85vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
