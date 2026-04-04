@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev:react": "vite --host",
 		"dev:server": "nodemon --exec ts-node server/index.ts",
-		"dev:all": "concurrently \"npm run dev\" \"npm run server\"",
+		"dev:all": "concurrently \"npm run dev:react\" \"npm run dev:server\"",
 		"build": "vite build && tsc -p tsconfig.server.json",
 		"start": "npm run build && vercel dev"
 	},

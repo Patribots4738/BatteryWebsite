@@ -57,6 +57,7 @@ The API expects JSON payloads with the following structure:
       "second": 45
     },
     "movingTo": "Robot",
+    "comingFrom": "Blast Charger",
     "initialVoltage": 13.192,
     "internalResistance": 0.021
   },
