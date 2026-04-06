@@ -4,12 +4,12 @@
     "target": "esnext",
     "lib": ["esnext"],
     "module": "esnext",
-    "types": ["@types/node", "vite"],
+    "types": ["node"],
     "skipLibCheck": true,
     "esModuleInterop": true,
 
     /* Bundler mode */
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",

@@ -3,9 +3,8 @@ import { parseData, JsonData, getDataFromFirebase } from './data.ts';
 type JsonRecord = Record<string, unknown>;
 
 type RequestLike = {
-	userAgent?: string;
 	method?: string;
-	headers?: Record<string, string>;
+	headers?: Record<string, string | string[] | undefined>;
 	query?: Record<string, string | string[] | undefined>;
 	body?: unknown;
 };
@@ -24,28 +23,38 @@ export default function handler(req: RequestLike, res: ResponseLike): void {
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
 	if (req.method === 'GET') {
-		if (req.body) {
-			const data = req.body as JsonRecord;
-			getDataFromFirebase(data[1] as string)
+		if (req.query?.path) {
+			const data = req.query?.path as string;
+			const rawUserAgent = req.headers?.['user-agent'] ?? req.headers?.['User-Agent'];
+			const userAgent = Array.isArray(rawUserAgent) ? rawUserAgent.join(', ') : (rawUserAgent ?? 'unknown-user-agent');
+			getDataFromFirebase(data as string)
 				.then((firebaseData) => {
-					console.log(`${req.userAgent} requested ${data[1]}, returned `, firebaseData);
-					res.status(200).json({
-						ok: true,
-						message: 'Data retrieved successfully',
-						data: firebaseData
-					});
+					console.log(`${userAgent} requested ${data}, returned ` + firebaseData);
+					if (firebaseData) {
+						res.status(200).json({
+							ok: true,
+							message: 'Data retrieved successfully',
+							data: firebaseData
+						});
+					} else {
+						res.status(206).json({
+							ok: true,
+							message: 'Data retrieved successfully, return was null',
+							data: firebaseData
+						});
+					}
 				})
 				.catch((error: unknown) => {
-					console.log('Failed to retrieve data from Firebase:', error);
+					console.log(`Failed to retrieve data ${data} from Firebase:` + error);
 					res.status(500).json({
 						ok: false,
 						message: 'Failed to retrieve data'
 					});
 				});
 		} else {
-			res.status(400).json({
-				ok: false,
-				message: 'No data received'
+			res.status(200).json({
+				ok: true,
+				message: 'Server OK, no data requested'
 			});
 		}
 		return;
@@ -55,12 +64,25 @@ export default function handler(req: RequestLike, res: ResponseLike): void {
 		console.log('Received data:', req.body);
 		if (req.body) {
 			parseData(req.body as JsonData)
-				.then(() => {
-					res.status(200).json({
-						ok: true,
-						message: 'Data accepted, sent to backend',
-						received: req.body
-					});
+				.then((errors) => {
+					if (!errors) {
+						res.status(202).json({
+							ok: true,
+							message: 'Data accepted, sent to backend',
+							received: req.body
+						});
+					} else {
+						for (const error of errors) {
+							console.error(error);
+						}
+						
+						res.status(500).json({
+							ok: false,
+							message: 'Failed to process data',
+							received: req.body,
+							errors: errors.map((error) => error.message)
+						});
+					}
 				})
 				.catch((error: unknown) => {
 					console.error('Failed to process POST payload:', error);

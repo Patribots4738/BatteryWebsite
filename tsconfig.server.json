@@ -5,16 +5,11 @@
     "target": "esnext",
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "outDir": "dist-server",
-    "rootDir": ".",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "types": ["node", "vite/client"]
-  },
-  "ts-node": {
-    "esm": true
+    "types": ["node"]
   },
   "include": ["api/**/*.ts"]
 }

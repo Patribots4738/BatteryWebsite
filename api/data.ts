@@ -1,7 +1,9 @@
 import { db } from './firebaseConfig.ts';
 import { get, push, set, ref } from 'firebase/database';
 
-export async function parseData(data: JsonData) {
+export async function parseData(data: JsonData): Promise<Error[]|null> {
+	const errors: Error[] = [];
+	
 	const fromRemote: JsonData = JSON.parse(JSON.stringify(data)) as JsonData;
 	const batteryNumber: number = fromRemote.batteryNumber;
 	const dateString: string = `${fromRemote.header.date.month}-${fromRemote.header.date.day}-${fromRemote.header.date.year}`;
@@ -10,7 +12,7 @@ export async function parseData(data: JsonData) {
 	
 	const latestBatteryData = ref(db, `/num/${batteryNumber}/latest/`);
 	const headerDb = ref(db, `/num/${batteryNumber}/headers/`);
-	const fullDataDb = ref(db, `/allData/${batteryNumber}/${fullDateTimeString}`);
+	const fullDataLocation = ref(db, `/allData/${batteryNumber}/${fullDateTimeString}`);
 	const recentlyUsedList = ref(db, `/recentlyUsed/`);
 	const lastChangedBattery = ref(db, '/latest/');
 	const lastChangedBatteryData = (await get(lastChangedBattery)).toJSON() as JsonData | null;
@@ -23,16 +25,49 @@ export async function parseData(data: JsonData) {
 		while (list.length > 10) {
 			list.pop()
 		}
-		await set(recentlyUsedList, list);
+		set(recentlyUsedList, list)
+			.catch((error) => {
+				console.error('Error updating recently used batteries list: ' + error);
+				errors.push(new Error('Failed to update recently used batteries list' + error));
+			});
 	}
 	
-	await push(headerDb, fromRemote.header);
-	await push(latestBatteryData, fromRemote.header);
-	await push(fullDataDb, fromRemote);
+	push(headerDb, fromRemote.header)
+		.then((snapshot) => {
+			console.log('Header data pushed successfully to header database, key:', snapshot.key);
+		})
+		.catch((error) => {
+			console.error('Error updating header db:', error);
+			errors.push(new Error('Failed to update header database' + error));
+		});
+	
+	set(latestBatteryData, fromRemote.header)
+		.then(() => {
+			console.log('Header data set successfully to latest data');
+		})
+		.catch((error) => {
+			console.error('Error updating latest header:', error);
+			errors.push(new Error('Failed to update latest header data' + error));
+		});
+	
+	push(fullDataLocation, fromRemote)
+		.then((snapshot) => {
+			console.log('All data pushed successfully, key:', snapshot.key);
+		})
+		.catch((error) => {
+			console.error('Error pushing latest data:', error);
+			errors.push(new Error('Failed to push full data to database' + error));
+		});
+	
+	if (errors.length > 0) {
+		return errors;
+	}
+	return null;
 }
 
-export async function getDataFromFirebase(path: string) {
-	return (await get(ref(db, path))).toJSON() as object;
+export async function getDataFromFirebase(path: string): Promise<object | null> {
+	const snapshot = await get(ref(db, path));
+	return snapshot.exists() ? (snapshot.val() as object) : null;
 }
 
 type DataPoint = {
