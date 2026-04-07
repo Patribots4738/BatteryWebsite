@@ -1,5 +1,6 @@
 import { getDataFromFirebase } from '../api/data.ts';
 
-function getRecent() {
-    getDataFromFirebase(`/recentlyUsed/`)
+// noinspection JSUnusedGlobalSymbols
+export function getRecent(): Promise<object | null> {
+	return getDataFromFirebase('/recentlyUsed/');
 }

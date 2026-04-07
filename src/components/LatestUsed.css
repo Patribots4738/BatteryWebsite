@@ -1,11 +1,10 @@
 ::root {
-
 }
 
 .latest-header {
-    color: gold;
-    font-size: 100px;
-    font-weight: 900;
-    height: auto;
-    width: auto;
+	color: gold;
+	font-size: 100px;
+	font-weight: 900;
+	height: auto;
+	width: auto;
 }

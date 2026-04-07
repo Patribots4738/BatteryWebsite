@@ -1,9 +1,6 @@
-// @ts-ignore: TS2882
-import './Hub.css'
-import { Component } from 'react'
+import './Hub.css';
+import { Component } from 'react';
 
-class HubPage extends Component {
+class HubPage extends Component {}
 
-}
-
-export default HubPage
+export default HubPage;

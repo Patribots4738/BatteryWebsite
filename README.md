@@ -44,34 +44,34 @@ The API expects JSON payloads with the following structure:
 
 ```json
 {
-  "batteryNumber": 17,
-  "header": {
-    "date": {
-      "year": 1928,
-      "month": 4,
-      "day": 12
-    },
-    "time": {
-      "hour": 16,
-      "time": 3,
-      "second": 45
-    },
-    "movingTo": "Robot",
-    "comingFrom": "Blast Charger",
-    "initialVoltage": 13.192,
-    "internalResistance": 0.021
-  },
-  "datapoints": {
-    "0": {
-      "time": 0,
-      "voltage": 13.192,
-      "current": 0.0
-    },
-    "1": {
-      "time": 1,
-      "voltage": 13.183,
-      "current": 1.0
-    }
-  }
+	"batteryNumber": 17,
+	"header": {
+		"date": {
+			"year": 1928,
+			"month": 4,
+			"day": 12
+		},
+		"time": {
+			"hour": 16,
+			"time": 3,
+			"second": 45
+		},
+		"movingTo": "Robot",
+		"comingFrom": "Blast Charger",
+		"initialVoltage": 13.192,
+		"internalResistance": 0.021
+	},
+	"datapoints": {
+		"0": {
+			"time": 0,
+			"voltage": 13.192,
+			"current": 0.0
+		},
+		"1": {
+			"time": 1,
+			"voltage": 13.183,
+			"current": 1.0
+		}
+	}
 }
 ```
