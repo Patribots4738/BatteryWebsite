@@ -1,5 +1,6 @@
 import { db } from './firebaseConfig.ts';
-import { get, push, set, ref } from 'firebase/database';
+import { get, push, ref, set } from 'firebase/database';
+import { JsonData } from './types.ts';
 
 export async function parseData(data: JsonData): Promise<Error[]|null> {
 	const errors: Error[] = [];
@@ -68,30 +69,4 @@ export async function parseData(data: JsonData): Promise<Error[]|null> {
 export async function getDataFromFirebase(path: string): Promise<object | null> {
 	const snapshot = await get(ref(db, path));
 	return snapshot.exists() ? (snapshot.val() as object) : null;
-}
-
-type DataPoint = {
-	time: number;
-	voltage: number;
-	current: number;
-};
-
-export interface JsonData {
-	batteryNumber: number;
-	header: {
-		date: {
-			year: number;
-			month: number;
-			day: number;
-		};
-		time: {
-			hour: number;
-			minute: number;
-			second: number;
-		};
-		movingTo: string,
-		initialVoltage: number;
-		internalResistance: number;
-	};
-	datapoints: Record<string, DataPoint>;
 }

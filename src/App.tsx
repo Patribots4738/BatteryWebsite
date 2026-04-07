@@ -1,10 +1,10 @@
 import './App.css'
-import BatteryContainer from './components/BatteryContainer'
+import LatestUsed from './components/LatestUsed'
 
 export default function App() {
     return (
         <div className="App">
-            <BatteryContainer />
+            <LatestUsed />
         </div>
     )
 }
