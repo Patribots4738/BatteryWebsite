@@ -1,10 +1,10 @@
 import './App.css';
-import LatestUsed from './components/LatestUsed';
+import HubPage from './pages/HubPage';
 
 export default function App() {
 	return (
 		<div className="App">
-			<LatestUsed />
+			<HubPage />
 		</div>
 	);
 }

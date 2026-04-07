@@ -25,7 +25,7 @@ class LatestUsed extends Component {
 		return (
 			<div className="latest-used">
 				<h2 className="latest-header">Latest Used</h2>
-				<ul>{this.formatData()}</ul>
+				<ul className="latest-li">{this.formatData()}</ul>
 			</div>
 		);
 	}

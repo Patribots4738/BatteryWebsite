@@ -8,3 +8,10 @@
 	height: auto;
 	width: auto;
 }
+
+.latest-li {
+	background-color: lightgray;
+	border-style: ridge;
+	border-width: 20px;
+	width: 70%;
+}
