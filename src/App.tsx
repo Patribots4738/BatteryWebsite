@@ -1,3 +1,4 @@
+// @ts-ignore: TS2882
 import './App.css'
 import LatestUsed from './components/LatestUsed'
 
