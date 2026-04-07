@@ -114,3 +114,32 @@ export function validateJsonData(obj: unknown): obj is JsonData {
 			validateDatapoints((obj as { datapoints: unknown }).datapoints))
 	);
 }
+
+export const BatteryNames: Record<number, string> = {
+	1: 'Unused',
+	2: 'Unused',
+	3: 'Unused',
+	4: 'Unused',
+	5: 'Unused',
+	6: 'Unused',
+	7: 'Marley',
+	8: 'Unused',
+	9: 'Unused',
+	10: 'Benson',
+	11: 'Waggles',
+	12: 'Unused',
+	13: 'Nemo',
+	14: 'Waldo',
+	15: 'Buc-ee',
+	16: 'Frank',
+	17: 'Dexter',
+	18: 'Woody',
+	19: 'Geoff',
+	20: 'Humpty Dumpty',
+	21: 'Olaf',
+	22: 'Snufflupagus',
+	23: 'Pikachu',
+	24: 'Voltaire',
+	25: 'Spyro',
+	26: 'Bowser'
+};

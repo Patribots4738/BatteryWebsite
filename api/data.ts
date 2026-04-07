@@ -31,16 +31,18 @@ export async function parseData(data: JsonData): Promise<Error[] | null> {
 	const lastChangedBattery = ref(db, '/latest/');
 	const lastChangedBatteryData = (
 		await get(lastChangedBattery)
-	).toJSON() as Header | null;
+	).toJSON() as JsonData | null;
 
-	if (validateHeader(lastChangedBatteryData)) {
+	if (validateJsonData(lastChangedBatteryData)) {
 		if (
-			lastChangedBatteryData?.movingTo.search(/Charger/) !== -1 &&
-			lastChangedBatteryData?.comingFrom.search(/Robot/) !== -1
+			lastChangedBatteryData?.header.movingTo.search(/Charger/) !== -1 &&
+			lastChangedBatteryData?.header.comingFrom.search(/Robot/) !== -1
 		) {
-			const list = (await get(recentlyUsedList)).exportVal() as number[];
+			const list = (
+				await get(recentlyUsedList)
+			).exportVal() as JsonData[];
 			list.reverse();
-			list.push(batteryNumber);
+			list.push(fromRemote);
 			list.reverse();
 			while (list.length > 10) {
 				list.pop();
@@ -114,7 +116,21 @@ export async function parseData(data: JsonData): Promise<Error[] | null> {
 
 export async function getDataFromFirebase(
 	path: string
-): Promise<object | null> {
-	const snapshot = await get(ref(db, path));
-	return snapshot.exists() ? (snapshot.val() as object) : null;
+): Promise<JsonData | Header | Header[] | number[] | null> {
+	const data = (await get(ref(db, path))).toJSON();
+	if (validateJsonData(data)) {
+		return data as JsonData;
+	} else if (validateHeader(data)) {
+		return data as Header;
+	} else if (Array.isArray(data)) {
+		if (data.every((item) => validateHeader(item))) {
+			return data as Header[];
+		} else if (data.every((item) => typeof item === 'number')) {
+			return data as number[];
+		} else {
+			return null;
+		}
+	} else {
+		return null;
+	}
 }
