@@ -37,7 +37,7 @@ jobs:
               run: pnpm run build
 
             - name: Execute Auto-Fixes
-              run: pnpm run chore:fix
+              run: pnpm run chore:format
 
             - name: Post-linting build
               run: pnpm run build

@@ -3,7 +3,11 @@ import { Component } from 'react';
 
 class Navigation extends Component {
 	naviBtns = () => {
-		const locationArr = [this.hubBtn(), this.searchBtn(), this.rawDataBtn()];
+		const locationArr = [
+			this.hubBtn(),
+			this.searchBtn(),
+			this.rawDataBtn()
+		];
 		switch (window.location.pathname) {
 			case '/Hub':
 				locationArr.splice(0, 1);
