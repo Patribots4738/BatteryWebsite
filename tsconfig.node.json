@@ -1,5 +1,12 @@
 {
 	"compilerOptions": {
+		"baseUrl": ".",
+		"paths": {
+			"@shared": ["./shared"],
+			"@shared/*": ["./shared/*"],
+			"@api": ["./api"],
+			"@api/*": ["./api/*"]
+		},
 		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
 		"target": "esnext",
 		"lib": ["esnext"],

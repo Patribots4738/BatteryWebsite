@@ -1,6 +1,6 @@
-import { db } from './firebaseConfig.ts';
+import { db } from '@shared/firebaseConfig.ts';
 import { get, ref, set } from 'firebase/database';
-import { JsonData, Header, validateHeader, validateJsonData } from './types.ts';
+import { JsonData, Header, validateHeader, validateJsonData } from './types';
 
 export async function parseData(data: JsonData): Promise<Error[] | null> {
 	const errors: Error[] = [];

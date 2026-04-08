@@ -1,6 +1,8 @@
 {
 	"compilerOptions": {
 		"noEmit": true,
+		"ignoreDeprecations": "6.0",
+		"baseUrl": ".",
 		"allowImportingTsExtensions": true,
 		"target": "esnext",
 		"module": "nodenext",
@@ -9,7 +11,13 @@
 		"esModuleInterop": true,
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
-		"types": ["node"]
+		"types": ["node"],
+		"paths": {
+			"@shared": ["./shared"],
+			"@shared/*": ["./shared/*"],
+			"@api": ["./api"],
+			"@api/*": ["./api/*"]
+		}
 	},
 	"include": ["api/**/*.ts"]
 }

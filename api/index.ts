@@ -1,4 +1,4 @@
-import { JsonData } from './types.ts';
+import { JsonData } from '@shared/types.ts';
 
 type JsonRecord = Record<string, unknown>;
 
@@ -30,7 +30,7 @@ export default function handler(req: RequestLike, res: ResponseLike): void {
 			const userAgent = Array.isArray(rawUserAgent)
 				? rawUserAgent.join(', ')
 				: (rawUserAgent ?? 'unknown-user-agent');
-			import('./data.ts').then((module) => {
+			import('../shared/data.ts').then((module) => {
 				module
 					.getDataFromFirebase(data as string)
 					.then((firebaseData) => {
@@ -76,7 +76,7 @@ export default function handler(req: RequestLike, res: ResponseLike): void {
 	if (req.method === 'POST') {
 		console.log('Received data:', req.body);
 		if (req.body) {
-			import('./data.ts').then((module) => {
+			import('@shared/data.ts').then((module) => {
 				module
 					.parseData(req.body as JsonData)
 					.then((errors) => {

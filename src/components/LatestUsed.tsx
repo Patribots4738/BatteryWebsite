@@ -1,14 +1,27 @@
 import './LatestUsed.css';
 import { type ReactElement, Component } from 'react';
-import { getDataFromFirebase } from '../../api/data.ts';
+import { getDataFromFirebase } from '@shared/data';
 import {
 	type JsonData,
 	BatteryNames,
 	validateJsonData,
 	validateHeader
-} from '../../api/types.ts';
+} from '@shared/types';
 
-class LatestUsed extends Component {
+type LatestUsedState = {
+	items: ReactElement[];
+};
+
+class LatestUsed extends Component<object, LatestUsedState> {
+	state: LatestUsedState = {
+		items: [<li key="loading">Loading recent data...</li>]
+	};
+
+	async componentDidMount() {
+		const items = await this.formatData();
+		this.setState({ items });
+	}
+
 	formatData = async (): Promise<ReactElement[]> => {
 		const displayArr: ReactElement[] = [];
 		const data = await getDataFromFirebase('/recentlyUsed/');
@@ -54,7 +67,7 @@ class LatestUsed extends Component {
 		return (
 			<div className="latest-used">
 				<h2 className="latest-header">Latest Used</h2>
-				<ul className="latest-li">{this.formatData()}</ul>
+				<ul className="latest-li">{this.state.items}</ul>
 			</div>
 		);
 	}
