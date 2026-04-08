@@ -1,0 +1,63 @@
+:root {
+	--btn-width: 85%;
+	--btn-radius: 20px;
+	--btn-weight: 800;
+	--btn-fontsize: 200%;
+}
+
+.navi-bin {
+	display: grid;
+	grid-template-rows: 20% 70%;
+	height: 100%;
+	width: 100%;
+	justify-items: center;
+}
+
+.navi-box {
+	display: grid;
+	grid-template-rows: 40% 40%;
+	gap: 5% 5%;
+	align-content: center;
+	justify-items: center;
+	background-color: darkslategrey;
+	border-style: inset;
+	border-width: 6px;
+	width: 85%;
+}
+
+.navi-header {
+	margin: 0%;
+	align-self: center;
+	height: fit-content;
+	width: fit-content;
+	border-style: outset;
+	border-width: 4px;
+	background-color: slategrey;
+	color: aliceblue;
+	font-style: oblique;
+	font-size: x-large;
+}
+
+.search {
+	width: var(--btn-width);
+	border-radius: var(--btn-radius);
+	background-color: aquamarine;
+	font-weight: var(--btn-weight);
+	font-size: var(--btn-fontsize);
+}
+
+.rawdata {
+	width: var(--btn-width);
+	border-radius: var(--btn-radius);
+	background-color: green;
+	font-weight: var(--btn-weight);
+	font-size: var(--btn-fontsize);
+}
+
+.hub {
+	width: var(--btn-width);
+	border-radius: var(--btn-radius);
+	background-color: mediumvioletred;
+	font-weight: var(--btn-weight);
+	font-size: var(--btn-fontsize);
+}

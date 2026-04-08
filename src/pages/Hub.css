@@ -3,9 +3,37 @@
 }
 
 .hub-container {
+	display: grid;
+	grid-template-columns: 30% 40% 30%;
+	grid-template-rows: repeat(6, [row-start] 1fr);
 	background-color: lightslategray;
 	border-style: groove;
 	border-width: 15px;
 	height: 90%;
 	width: 94%;
+}
+
+.navi {
+	grid-row: 1 / span 2;
+}
+
+.battery {
+	background-color: green;
+	grid-row: 1 / span 6;
+	grid-column: 2;
+}
+
+.current {
+	background-color: violet;
+	grid-row: 1 / span 2;
+}
+
+.blast {
+	background-color: brown;
+	grid-row: 3 / span 6;
+}
+
+.latest {
+	background-color: yellow;
+	grid-row: 3 / span 6;
 }
