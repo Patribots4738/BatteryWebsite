@@ -53,12 +53,13 @@ The API expects JSON payloads with the following structure:
 		},
 		"time": {
 			"hour": 16,
-			"time": 3,
+			"minute": 3,
 			"second": 45
 		},
 		"movingTo": "Robot",
 		"comingFrom": "Blast Charger",
 		"initialVoltage": 13.192,
+		"charge": 104.28,
 		"internalResistance": 0.021
 	},
 	"datapoints": {

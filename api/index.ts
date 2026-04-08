@@ -1,5 +1,3 @@
-import { JsonData } from '@shared/types.ts';
-
 type JsonRecord = Record<string, unknown>;
 
 type RequestLike = {
@@ -76,9 +74,9 @@ export default function handler(req: RequestLike, res: ResponseLike): void {
 	if (req.method === 'POST') {
 		console.log('Received data:', req.body);
 		if (req.body) {
-			import('@shared/data.ts').then((module) => {
+			import('../shared/data.ts').then((module) => {
 				module
-					.parseData(req.body as JsonData)
+					.parseData(req.body)
 					.then((errors) => {
 						if (!errors) {
 							res.status(202).json({

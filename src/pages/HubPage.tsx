@@ -1,4 +1,4 @@
-import './Hub.css';
+import './HubPage.css';
 import { Component } from 'react';
 import LatestUsed from '../components/LatestUsed';
 

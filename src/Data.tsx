@@ -1,4 +1,4 @@
-import { getDataFromFirebase } from '@shared/data.ts';
+import { getDataFromFirebase } from '../shared/data';
 
 // noinspection JSUnusedGlobalSymbols
 export function getRecent(): Promise<object | null> {
