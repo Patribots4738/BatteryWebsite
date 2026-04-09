@@ -4,19 +4,16 @@ import SearchPage from './pages/SearchPage';
 import RawDataPage from './pages/RawDataPage';
 
 function getPage() {
-	switch (window.location.pathname) {
-		case '/Hub':
+	switch (localStorage.getItem('currentPage')) {
+		case 'hub':
 			return <HubPage />;
-			break;
-		case '/Search':
+		case 'search':
 			return <SearchPage />;
-			break;
-		case '/Raw_Data':
+		case 'rawData':
 			return <RawDataPage />;
-			break;
 		default:
-			window.location.pathname = '/Hub';
-			return;
+			localStorage.setItem('currentPage', 'hub');
+			return <HubPage />;
 	}
 }
 
