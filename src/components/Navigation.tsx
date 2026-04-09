@@ -8,14 +8,14 @@ class Navigation extends Component {
 			this.searchBtn(),
 			this.rawDataBtn()
 		];
-		switch (window.location.pathname) {
-			case '/Hub':
+		switch (localStorage.getItem('currentPage')) {
+			case 'hub':
 				locationArr.splice(0, 1);
 				break;
-			case '/Search':
+			case 'search':
 				locationArr.splice(1, 1);
 				break;
-			case '/Raw_Data':
+			case 'rawData':
 				locationArr.splice(2, 1);
 				break;
 			default:
@@ -28,7 +28,10 @@ class Navigation extends Component {
 		return (
 			<button
 				className="search"
-				onClick={() => (window.location.pathname = '/Search')}
+				onClick={() => {
+					localStorage.setItem('currentPage', 'search');
+					window.location.reload();
+				}}
 			>
 				Search
 			</button>
@@ -39,7 +42,10 @@ class Navigation extends Component {
 		return (
 			<button
 				className="rawdata"
-				onClick={() => (window.location.pathname = '/Raw_Data')}
+				onClick={() => {
+					localStorage.setItem('currentPage', 'rawData');
+					window.location.reload();
+				}}
 			>
 				Raw Data
 			</button>
@@ -50,7 +56,10 @@ class Navigation extends Component {
 		return (
 			<button
 				className="hub"
-				onClick={() => (window.location.pathname = '/Hub')}
+				onClick={() => {
+					localStorage.setItem('currentPage', 'hub');
+					window.location.reload();
+				}}
 			>
 				Hub
 			</button>
