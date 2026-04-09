@@ -1,4 +1,7 @@
 {
+	"compilerOptions": {
+		"moduleResolution": "nodenext"
+	},
 	"extends": "../tsconfig.server.json",
 	"include": ["./*.ts"]
 }
