@@ -1,0 +1,18 @@
+:root {
+}
+
+.latest-header {
+	color: gold;
+	font-size: 100px;
+	font-weight: 900;
+	height: auto;
+	width: auto;
+}
+
+.latest-li {
+	background-color: lightgray;
+	border-style: ridge;
+	border-width: 20px;
+	width: 70%;
+	margin: 0 auto;
+}

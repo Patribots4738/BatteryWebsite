@@ -1,5 +1,3 @@
-import { JsonData } from './types.ts';
-
 type JsonRecord = Record<string, unknown>;
 
 type RequestLike = {
@@ -25,12 +23,19 @@ export default function handler(req: RequestLike, res: ResponseLike): void {
 	if (req.method === 'GET') {
 		if (req.query?.path) {
 			const data = req.query?.path as string;
-			const rawUserAgent = req.headers?.['user-agent'] ?? req.headers?.['User-Agent'];
-			const userAgent = Array.isArray(rawUserAgent) ? rawUserAgent.join(', ') : (rawUserAgent ?? 'unknown-user-agent');
-			import('./data.ts').then((module) => {
-				module.getDataFromFirebase(data as string)
+			const rawUserAgent =
+				req.headers?.['user-agent'] ?? req.headers?.['User-Agent'];
+			const userAgent = Array.isArray(rawUserAgent)
+				? rawUserAgent.join(', ')
+				: (rawUserAgent ?? 'unknown-user-agent');
+			import('../shared/data.ts').then((module) => {
+				module
+					.getDataFromFirebase(data as string)
 					.then((firebaseData) => {
-						console.log(`${userAgent} requested ${data}, returned ` + firebaseData);
+						console.log(
+							`${userAgent} requested ${data}, returned ` +
+								firebaseData
+						);
 						if (firebaseData) {
 							res.status(200).json({
 								ok: true,
@@ -40,13 +45,17 @@ export default function handler(req: RequestLike, res: ResponseLike): void {
 						} else {
 							res.status(206).json({
 								ok: true,
-								message: 'Data retrieved successfully, return was null',
+								message:
+									'Data retrieved successfully, return was null',
 								data: firebaseData
 							});
 						}
 					})
 					.catch((error: unknown) => {
-						console.log(`Failed to retrieve data ${data} from Firebase:` + error);
+						console.log(
+							`Failed to retrieve data ${data} from Firebase:` +
+								error
+						);
 						res.status(500).json({
 							ok: false,
 							message: 'Failed to retrieve data'
@@ -65,8 +74,9 @@ export default function handler(req: RequestLike, res: ResponseLike): void {
 	if (req.method === 'POST') {
 		console.log('Received data:', req.body);
 		if (req.body) {
-			import('./data.ts').then((module) => {
-				module.parseData(req.body as JsonData)
+			import('../shared/data.ts').then((module) => {
+				module
+					.parseData(req.body)
 					.then((errors) => {
 						if (!errors) {
 							res.status(202).json({
@@ -78,7 +88,7 @@ export default function handler(req: RequestLike, res: ResponseLike): void {
 							for (const error of errors) {
 								console.error(error);
 							}
-							
+
 							res.status(500).json({
 								ok: false,
 								message: 'Failed to process data',

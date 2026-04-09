@@ -1,6 +1,33 @@
 {
-    "rules": {
-        ".read": true,
-        ".write": true
-    }
+	"rules": {
+		"allData": {
+			".read": true,
+			"$num": {
+				".read": true,
+				".write": "$num.isNumber()",
+				".validate": "$num.isNumber()"
+			}
+		},
+		"latest": {
+			".read": true,
+			".write": true
+		},
+		"num": {
+			".read": true,
+			".write": true,
+			"$num": {
+				".read": true,
+				".write": "$num.isNumber()",
+				".validate": "$num.isNumber()",
+				"headers": {
+					".read": true,
+					".write": true
+				}
+			}
+		},
+		"recentlyUsed": {
+			".read": true,
+			".write": true
+		}
+	}
 }
