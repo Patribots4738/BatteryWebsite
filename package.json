@@ -25,6 +25,7 @@
 		"@emotion/styled": "^11.14.1",
 		"@mui/icons-material": "^7.3.9",
 		"@mui/material": "^7.3.9",
+		"@vercel/speed-insights": "^2.0.0",
 		"express": "^5.2.1",
 		"firebase": "^12.11.0",
 		"react": "^19.2.4",
