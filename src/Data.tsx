@@ -1,6 +1,20 @@
+//import { useState } from 'react'
 import { getDataFromFirebase } from '../shared/data';
+/*
+import { 
+	BatteryNames,
+	type JsonData, 
+} from '../shared/types'
+*/
 
-// noinspection JSUnusedGlobalSymbols
-export function getRecent(): Promise<object | null> {
-	return getDataFromFirebase('/recentlyUsed/');
+// Data Retrival
+export async function getAllData() {
+	const data = await getDataFromFirebase('/allData/');
+	console.log(data);
+	console.log(typeof data);
 }
+
+//const [allData, setAllData] = useState('/allData/')
+//const [latetBattery, setLatestBattery] = useState('/latest/')
+//const [numData, setNumData] = useState('/num/')
+//const [recentBattery, setRecentBattery] = useState('/recentlyUsed/')

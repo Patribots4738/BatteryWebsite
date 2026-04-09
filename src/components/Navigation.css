@@ -1,8 +1,8 @@
 :root {
 	--btn-width: 85%;
-	--btn-radius: 20px;
+	--btn-radius: 15px;
 	--btn-weight: 800;
-	--btn-fontsize: 200%;
+	--btn-fontsize: 30px;
 }
 
 .navi-bin {
@@ -22,20 +22,22 @@
 	background-color: darkslategrey;
 	border-style: inset;
 	border-width: 6px;
+	border-radius: 8px;
 	width: 85%;
 }
 
 .navi-header {
 	margin: 0%;
-	align-self: center;
+	justify-self: center;
 	height: fit-content;
 	width: fit-content;
 	border-style: outset;
 	border-width: 4px;
-	background-color: slategrey;
+	border-radius: 8px;
+	background-color: darkslategrey;
 	color: aliceblue;
 	font-style: oblique;
-	font-size: x-large;
+	font-size: em;
 }
 
 .search {
@@ -44,14 +46,16 @@
 	background-color: aquamarine;
 	font-weight: var(--btn-weight);
 	font-size: var(--btn-fontsize);
+	color: darkcyan;
 }
 
 .rawdata {
 	width: var(--btn-width);
 	border-radius: var(--btn-radius);
-	background-color: green;
+	background-color: lightgreen;
 	font-weight: var(--btn-weight);
 	font-size: var(--btn-fontsize);
+	color: darkgreen;
 }
 
 .hub {
