@@ -8,8 +8,8 @@ import {
 */
 
 // Data Retrival
-export async function getAllData() {
-	const data = await getDataFromFirebase('/allData/');
+export async function getNumData() {
+	const data = await getDataFromFirebase('/num/');
 	console.log(data);
 	console.log(typeof data);
 }

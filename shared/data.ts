@@ -105,6 +105,11 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 	const recentlyUsedList = ref(db, `/recentlyUsed/`);
 	const lastChangedBattery = ref(db, '/latest/');
 
+	const timeout = (ms: number) =>
+		new Promise((_, reject) =>
+			setTimeout(() => reject(new Error('timeout')), ms)
+		);
+
 	if (
 		canonicalData.header.movingTo.search(/Charger/) !== -1 &&
 		canonicalData.header.comingFrom.search(/Robot/) !== -1
@@ -113,19 +118,21 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 			(await get(recentlyUsedList)).toJSON()
 		);
 		const list = [canonicalData, ...currentList].slice(0, 10);
-		set(recentlyUsedList, list).catch((error) => {
-			console.error(
-				'Error updating recently used batteries list: ' + error
-			);
-			errors.push(
-				new Error(
-					'Failed to update recently used batteries list' + error
-				)
-			);
-		});
+		await Promise.race([set(recentlyUsedList, list), timeout(10000)]).catch(
+			(error) => {
+				console.error(
+					'Error updating recently used batteries list: ' + error
+				);
+				errors.push(
+					new Error(
+						'Failed to update recently used batteries list' + error
+					)
+				);
+			}
+		);
 	}
 
-	set(headerDb, canonicalData.header)
+	await Promise.race([set(headerDb, canonicalData.header), timeout(10000)])
 		.then(() => {
 			console.log('Header data pushed successfully to header database');
 		})
@@ -134,7 +141,10 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 			errors.push(new Error('Failed to update header database' + error));
 		});
 
-	set(latestBatteryData, canonicalData.header)
+	await Promise.race([
+		set(latestBatteryData, canonicalData.header),
+		timeout(10000)
+	])
 		.then(() => {
 			console.log('Header data set successfully to latest data');
 		})
@@ -145,7 +155,7 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 			);
 		});
 
-	set(fullDataLocation, canonicalData)
+	await Promise.race([set(fullDataLocation, canonicalData), timeout(10000)])
 		.then(() => {
 			console.log('All data pushed successfully');
 		})
@@ -156,7 +166,10 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 			);
 		});
 
-	set(lastChangedBattery, canonicalData.header)
+	await Promise.race([
+		set(lastChangedBattery, canonicalData.header),
+		timeout(10000)
+	])
 		.then(() => {
 			console.log('Latest battery data updated successfully');
 		})
@@ -168,15 +181,30 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 		});
 
 	if (errors.length > 0) {
+		for (const error of errors) {
+			console.error('Error during data processing:', error);
+		}
 		return errors;
 	}
 	return null;
 }
 
+/**
+ * Pulls data from firebase at the given path.
+ * `/num` returns an array of battery numbers with all their headers and the latest one.
+ * `/latest` returns Header of the latest battery that was updated.
+ * `/allData/:batteryNumber/:dateTime` returns the full JsonData for a given battery and timestamp.
+ * `/recentlyUsed` returns an array of the 10 most recently used batteries with their headers.
+ * @param path
+ * @returns Promise of a specified type. `/num` returns `object`, `/latest` returns `Header`, `/allData/:batteryNumber/:dateTime` returns `JsonData`, and `/recentlyUsed` returns `Header[]`. Pulling some other path that has data will result in an `object` of that data. Attempting to pull an unauthorized, incorrect, or bad path returns an empty object.
+ */
 export async function getDataFromFirebase(
 	path: string
-): Promise<JsonData | Header | Header[] | object | unknown> {
+): Promise<JsonData | Header | Header[] | object> {
 	const data = (await get(ref(db, path))).toJSON();
+	if (data === null) {
+		return {};
+	}
 	if (validateJsonData(data)) {
 		return data as JsonData;
 	} else if (validateHeader(data)) {
@@ -185,9 +213,9 @@ export async function getDataFromFirebase(
 		if (data.every((item) => validateHeader(item))) {
 			return data as Header[];
 		} else {
-			return data as unknown;
+			return data as object;
 		}
 	} else {
-		return data as unknown;
+		return data as object;
 	}
 }

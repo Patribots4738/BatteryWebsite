@@ -1,34 +1,35 @@
 :root {
+	--btn-height: 80%;
 	--btn-width: 85%;
 	--btn-radius: 15px;
 	--btn-weight: 800;
-	--btn-fontsize: 30px;
+	--btn-fontsize: 1.5em;
 }
 
 .navi-bin {
-	display: grid;
-	grid-template-rows: 20% 70%;
 	height: 100%;
 	width: 100%;
 	justify-items: center;
+	align-content: center;
 }
 
 .navi-box {
 	display: grid;
-	grid-template-rows: 40% 40%;
-	gap: 5% 5%;
+	grid-template-rows: 50% 50%;
 	align-content: center;
 	justify-items: center;
+	align-items: center;
 	background-color: darkslategrey;
 	border-style: inset;
 	border-width: 6px;
 	border-radius: 8px;
-	width: 85%;
+	width: 80%;
+	height: 75%;
 }
 
 .navi-header {
 	margin: 0%;
-	justify-self: center;
+	margin-bottom: 1%;
 	height: fit-content;
 	width: fit-content;
 	border-style: outset;
@@ -41,27 +42,45 @@
 }
 
 .search {
+	height: var(--btn-height);
 	width: var(--btn-width);
 	border-radius: var(--btn-radius);
 	background-color: aquamarine;
 	font-weight: var(--btn-weight);
 	font-size: var(--btn-fontsize);
 	color: darkcyan;
+	cursor: pointer;
+}
+
+.search:hover {
+	background-color: aqua;
 }
 
 .rawdata {
+	height: var(--btn-height);
 	width: var(--btn-width);
 	border-radius: var(--btn-radius);
 	background-color: lightgreen;
 	font-weight: var(--btn-weight);
 	font-size: var(--btn-fontsize);
 	color: darkgreen;
+	cursor: pointer;
+}
+
+.rawdata:hover {
+	background-color: greenyellow;
 }
 
 .hub {
+	height: var(--btn-height);
 	width: var(--btn-width);
 	border-radius: var(--btn-radius);
-	background-color: mediumvioletred;
+	background-color: lightcoral;
 	font-weight: var(--btn-weight);
 	font-size: var(--btn-fontsize);
+	cursor: pointer;
+}
+
+.hub:hover {
+	background-color: coral;
 }
