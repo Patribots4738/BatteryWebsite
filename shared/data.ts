@@ -1,13 +1,13 @@
-import { db } from './firebaseConfig.ts';
+import { db } from './firebaseConfig.js';
 import { get, ref, set } from 'firebase/database';
 import {
-	type JsonData,
-	type Header,
 	formatValidationIssues,
 	getJsonDataValidationIssues,
+	type Header,
+	type JsonData,
 	validateHeader,
 	validateJsonData
-} from './types.ts';
+} from './types.js';
 
 type RawRecord = Record<string, unknown>;
 
@@ -175,7 +175,7 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 
 export async function getDataFromFirebase(
 	path: string
-): Promise<JsonData | Header | Header[] | number[] | null> {
+): Promise<JsonData | Header | Header[] | object | unknown> {
 	const data = (await get(ref(db, path))).toJSON();
 	if (validateJsonData(data)) {
 		return data as JsonData;
@@ -184,12 +184,10 @@ export async function getDataFromFirebase(
 	} else if (Array.isArray(data)) {
 		if (data.every((item) => validateHeader(item))) {
 			return data as Header[];
-		} else if (data.every((item) => typeof item === 'number')) {
-			return data as number[];
 		} else {
-			return null;
+			return data as unknown;
 		}
 	} else {
-		return null;
+		return data as unknown;
 	}
 }
