@@ -200,7 +200,7 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
  */
 export async function getDataFromFirebase(
 	path: string
-): Promise<JsonData | Header | Header[] | object> {
+): Promise<JsonData | JsonData[] | Header | Header[] | object> {
 	const data = (await get(ref(db, path))).toJSON();
 	if (data === null) {
 		return {};
@@ -212,6 +212,8 @@ export async function getDataFromFirebase(
 	} else if (Array.isArray(data)) {
 		if (data.every((item) => validateHeader(item))) {
 			return data as Header[];
+		} else if (data.every((item) => validateJsonData(item))) {
+			return data as JsonData[];
 		} else {
 			return data as object;
 		}
