@@ -1,11 +1,11 @@
 {
 	"rules": {
 		"allData": {
-			".read": true,
+			".read": false,
+			".write": true,
 			"$num": {
 				".read": true,
-				".write": "$num.isNumber()",
-				".validate": "$num.isNumber()"
+				".write": true
 			}
 		},
 		"latest": {
@@ -17,9 +17,12 @@
 			".write": true,
 			"$num": {
 				".read": true,
-				".write": "$num.isNumber()",
-				".validate": "$num.isNumber()",
+				".write": true,
 				"headers": {
+					".read": true,
+					".write": true
+				},
+				"latest": {
 					".read": true,
 					".write": true
 				}
