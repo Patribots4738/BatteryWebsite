@@ -1,4 +1,4 @@
-import { db } from './firebaseConfig.ts';
+import { db } from './firebaseConfig.js';
 import { get, ref, set } from 'firebase/database';
 import {
 	type JsonData,
