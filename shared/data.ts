@@ -7,7 +7,7 @@ import {
 	type JsonData,
 	validateHeader,
 	validateJsonData
-} from './types.ts';
+} from './types.js';
 
 type RawRecord = Record<string, unknown>;
 
@@ -175,7 +175,7 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 
 export async function getDataFromFirebase(
 	path: string
-): Promise<JsonData | Header | Header[] | object | null> {
+): Promise<JsonData | Header | Header[] | object | unknown> {
 	const data = (await get(ref(db, path))).toJSON();
 	if (validateJsonData(data)) {
 		return data as JsonData;
@@ -185,9 +185,9 @@ export async function getDataFromFirebase(
 		if (data.every((item) => validateHeader(item))) {
 			return data as Header[];
 		} else {
-			return data;
+			return data as unknown;
 		}
 	} else {
-		return data;
+		return data as unknown;
 	}
 }
