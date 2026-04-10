@@ -1,0 +1,13 @@
+:root {
+	--huh: green;
+}
+
+.search-container {
+	height: 90%;
+	width: 94%;
+	background-color: lightslategray;
+	border-style: groove;
+	border-width: 15px;
+	display: grid;
+	grid-template-rows: 20% 80%;
+}

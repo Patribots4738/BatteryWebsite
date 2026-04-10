@@ -33,7 +33,7 @@ class Navigation extends Component {
 					window.location.reload();
 				}}
 			>
-				Search
+				Search 🔍︎
 			</button>
 		);
 	};
@@ -47,7 +47,7 @@ class Navigation extends Component {
 					window.location.reload();
 				}}
 			>
-				Raw Data
+				Raw Data 📊
 			</button>
 		);
 	};
@@ -61,7 +61,7 @@ class Navigation extends Component {
 					window.location.reload();
 				}}
 			>
-				Hub
+				Hub 🏠︎
 			</button>
 		);
 	};
@@ -69,7 +69,7 @@ class Navigation extends Component {
 	render() {
 		return (
 			<div className="navi-bin">
-				<h2 className="navi-header">Navigation</h2>
+				<h2 className="navi-header"> Navigation </h2>
 				<div className="navi-box">{this.naviBtns()}</div>
 			</div>
 		);
