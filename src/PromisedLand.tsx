@@ -1,19 +1,26 @@
 //import { useState } from 'react'
-import { getDataFromFirebase } from '../shared/data';
+//import { getDataFromFirebase } from '../shared/data';
 /*
 import { 
 	BatteryNames,
-	type JsonData, 
+	type JsonData,
+	type Header 
 } from '../shared/types'
 */
 
 // Data Retrival
-export async function getNumData() {
-	const data = await getDataFromFirebase('/num/');
-	console.log(data);
-	console.log(typeof data);
+/*
+async function getLatestUsed() {
+	let fireData = await getDataFromFirebase('/recentlyUsed') as object
+	for (const data in fireData) {
+		console.log(data);
+	}
 }
 
+async function getNumData() {
+	const data = await getDataFromFirebase('/num/');
+}
+*/
 //const [allData, setAllData] = useState('/allData/')
 //const [latetBattery, setLatestBattery] = useState('/latest/')
 //const [numData, setNumData] = useState('/num/')

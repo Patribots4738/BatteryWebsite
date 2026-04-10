@@ -6,7 +6,7 @@ class LatestUsed extends Component {
 		return (
 			<div className="latest-bin">
 				<h2 className="latest-header">Latest Used</h2>
-				<tr className="latest-li">Work in Progress</tr>
+				<tr className="latest-li">{}</tr>
 			</div>
 		);
 	}
