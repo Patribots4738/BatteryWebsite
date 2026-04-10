@@ -196,7 +196,7 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
  * `/allData/:batteryNumber/:dateTime` returns the full JsonData for a given battery and timestamp.
  * `/recentlyUsed` returns an array of the 10 most recently used batteries with their headers.
  * @param path
- * @returns Promise of a specified type. `/num` returns `object`, `/latest` returns `Header`, `/allData/:batteryNumber/:dateTime` returns `JsonData`, and `/recentlyUsed` returns `Header[]`. Attempting to pull an unauthorized, incorrect, or bad path returns an empty object.
+ * @returns Promise of a specified type. `/num` returns `object`, `/latest` returns `Header`, `/allData/:batteryNumber/:dateTime` returns `JsonData`, and `/recentlyUsed` returns `Header[]`. Pulling some other path that has data will result in an `object` of that data. Attempting to pull an unauthorized, incorrect, or bad path returns an empty object.
  */
 export async function getDataFromFirebase(
 	path: string
