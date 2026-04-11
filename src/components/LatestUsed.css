@@ -2,7 +2,7 @@
 }
 
 .latest-header {
-	margin: 0%;
+	margin: 0% 0% 1% 0%;
 	align-self: center;
 	height: fit-content;
 	width: fit-content;
@@ -12,26 +12,57 @@
 	background-color: darkslategrey;
 	color: aliceblue;
 	font-style: oblique;
-	font-size: em;
+	font-size: 1.5em;
 }
 
 .latest-bin {
-	display: grid;
-	grid-template-rows: 20% 80%;
-	outline: auto;
 	height: 100%;
 	width: 100%;
 	justify-items: center;
 	align-content: center;
 }
 
+.latest-box {
+	justify-items: center;
+	background-color: darkslategrey;
+	border-style: inset;
+	border-width: 6px;
+	border-radius: 8px;
+	width: 92%;
+	height: 80%;
+}
+
 .latest-li {
 	display: table;
+	border-collapse: collapse;
+	margin-top: 1%;
 	table-layout: auto;
 	background-color: lightgray;
 	border-style: inset;
 	border-width: 6px;
-	height: 80%;
-	width: 70%;
-	margin: 0;
+	height: fit-content;
+	width: 98%;
+}
+
+.latestTable {
+	height: fit-content;
+	width: 20%;
+	border-style: groove;
+	border-width: 5px;
+	border-color: grey;
+}
+
+th.latestTable {
+	background-color: darkslategrey;
+	font-weight: 900;
+	font-size: 1.2em;
+	color: aliceblue;
+	margin: 50%;
+}
+
+td.latestTable {
+	background-color: darkgrey;
+	font-weight: 600;
+	font-size: 1em;
+	color: antiquewhite;
 }
