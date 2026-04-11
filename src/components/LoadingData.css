@@ -1,0 +1,32 @@
+.loading-bin {
+	height: 100%;
+	width: 100%;
+	font-size: 100%;
+	justify-items: center;
+	align-content: center;
+}
+
+.loading-text {
+	color: aliceblue;
+	font-size: 1em;
+	font-weight: 500;
+}
+
+.loading-animation {
+	height: 5em;
+	width: 5em;
+	background-color: black;
+	animation-name: spin;
+	animation-duration: 2s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+}
+
+@keyframes spin {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}

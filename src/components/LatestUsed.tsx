@@ -2,6 +2,7 @@ import './LatestUsed.css';
 import { useState, useEffect } from 'react';
 import { getLatestUsed } from '../PromisedLand';
 import { type JsonData, BatteryNames } from '../../shared/types';
+import LoadingData from './LoadingData';
 
 function LatestUsed() {
 	const [latestData, setLatestData] = useState<JsonData[]>([]);
@@ -73,7 +74,7 @@ function LatestUsed() {
 			<div className="latest-bin">
 				<h2 className="latest-header">Latest Used</h2>
 				<div className="latest-box">
-					<div>Loading...</div>
+					<LoadingData />
 				</div>
 			</div>
 		);
