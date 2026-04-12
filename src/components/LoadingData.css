@@ -6,18 +6,37 @@
 	align-content: center;
 }
 
+.loading-text-bin {
+	width: fit-content;
+}
+
 .loading-text {
 	color: aliceblue;
-	font-size: 1em;
-	font-weight: 500;
+	font-size: 2em;
+	font-weight: 700;
+	overflow: hidden;
+	width: fit-content;
+	white-space: nowrap;
+	animation-name: loadingdots;
+	animation-duration: 0.2s;
+	animation-timing-function: steps(4);
+	animation-iteration-count: infinite;
+}
+
+@keyframes loadingdots {
+	from {
+		width: 65%;
+	}
+	to {
+		width: 100%;
+	}
 }
 
 .loading-animation {
 	height: 5em;
 	width: 5em;
-	background-color: black;
 	animation-name: spin;
-	animation-duration: 2s;
+	animation-duration: 0.4s;
 	animation-timing-function: linear;
 	animation-iteration-count: infinite;
 }

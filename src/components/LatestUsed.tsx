@@ -30,7 +30,7 @@ function LatestUsed() {
 	) {
 		const newRow = (
 			<tr>
-				<td className="latestTable">{batteryNum}</td>
+				<td className="latestTable">B{batteryNum}</td>
 				<td className="latestTable">{batteryName}</td>
 				<td className="latestTable">{from}</td>
 				<td className="latestTable">{to}</td>
