@@ -1,16 +1,21 @@
 import './RawDataPage.css';
 import { Component } from 'react';
 import Navigation from '../components/Navigation';
+import RawDataDisplay from '../components/RawDataDisplay';
 
 class RawDataPage extends Component {
 	render() {
 		return (
 			<div className="rawdata-container">
-				<div>
-					<h1>Raw Data</h1>
-					<h3>Work in Progress</h3>
+				<div className="header-bin">
+					<h1 className="page-header">Raw Data</h1>
 				</div>
-				<Navigation />
+				<div className="navigation">
+					<Navigation />
+				</div>
+				<div className="rawdata-display">
+					<RawDataDisplay />
+				</div>
 			</div>
 		);
 	}

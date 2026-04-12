@@ -3,11 +3,48 @@
 }
 
 .rawdata-container {
+	display: grid;
+	grid-template-columns: 70% 30%;
+	grid-template-rows: repeat(6, [row-start] 1fr);
 	height: 90%;
 	width: 94%;
 	background-color: lightslategray;
+	opacity: 92%;
 	border-style: groove;
 	border-width: 15px;
 	display: grid;
-	grid-template-rows: 20% 80%;
+}
+
+.header-bin {
+	display: flex;
+	justify-content: center;
+	grid-column: 1;
+	height: 100%;
+	width: 100%;
+	grid-row: 1;
+}
+
+.page-header {
+	border-style: outset;
+	border-width: 4px;
+	border-radius: 8px;
+	font-style: oblique;
+	font-size: 4em;
+	font-weight: 900;
+	color: aliceblue;
+	background-color: darkslategray;
+	align-self: flex-end;
+	width: fit-content;
+	height: fit-content;
+	margin: 0% 0% 2% 0%;
+}
+
+.navigation {
+	grid-column: 2;
+	grid-row: 1 / span 2;
+}
+
+.rawdata-display {
+	grid-column: 1;
+	grid-row: 2 / span 6;
 }

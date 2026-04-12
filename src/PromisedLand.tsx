@@ -6,3 +6,7 @@ import { type JsonData } from '../shared/types';
 export async function getLatestUsed() {
 	return (await getDataFromFirebase('/recentlyUsed')) as JsonData[];
 }
+
+export async function getNumData() {
+	return (await getDataFromFirebase('/num')) as object;
+}
