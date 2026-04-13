@@ -3,39 +3,18 @@ import { Component } from 'react';
 
 class Navigation extends Component {
 	naviBtns = () => {
-		const locationArr = [
-			this.hubBtn(),
-			this.searchBtn(),
-			this.rawDataBtn()
-		];
+		const locationArr = [this.hubBtn(), this.rawDataBtn()];
 		switch (localStorage.getItem('currentPage')) {
 			case 'hub':
 				locationArr.splice(0, 1);
 				break;
-			case 'search':
-				locationArr.splice(1, 1);
-				break;
 			case 'rawData':
-				locationArr.splice(2, 1);
+				locationArr.splice(1, 1);
 				break;
 			default:
 				return;
 		}
 		return locationArr;
-	};
-
-	searchBtn = () => {
-		return (
-			<button
-				className="search"
-				onClick={() => {
-					localStorage.setItem('currentPage', 'search');
-					window.location.reload();
-				}}
-			>
-				Search 🔍︎
-			</button>
-		);
 	};
 
 	rawDataBtn = () => {
