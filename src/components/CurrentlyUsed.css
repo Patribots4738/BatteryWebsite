@@ -1,0 +1,85 @@
+.current-bin {
+	height: 100%;
+	width: 100%;
+	justify-content: center;
+	justify-items: center;
+	align-content: center;
+}
+
+.battery-widg {
+	background-image: url('../images/BatteryImage.jpg');
+	background-size: cover;
+	height: 80%;
+	width: 80%;
+	justify-items: center;
+	align-content: flex-end;
+}
+
+.current-header {
+	margin: 0% 0% 1% 0%;
+	align-self: center;
+	height: fit-content;
+	width: fit-content;
+	border-style: outset;
+	border-width: 4px;
+	border-radius: 8px;
+	background-color: darkslategrey;
+	color: aliceblue;
+	font-style: oblique;
+	font-size: 1.5em;
+}
+
+.current-grid {
+	display: grid;
+	grid-template-rows: 20% 20% 20% 40%;
+	height: 70%;
+	width: 90%;
+	background-color: slategrey;
+	border-style: inset;
+	border-width: 4px;
+	color: aliceblue;
+	margin-bottom: 3%;
+}
+
+.identification {
+	margin: 0;
+	background-color: darkslategray;
+	border-bottom-style: inset;
+	border-bottom-width: 2px;
+	border-bottom-color: lightgrey;
+	font-size: 1.2em;
+	align-self: center;
+}
+
+.dateNTime {
+	margin: 0;
+	background-color: darkslategray;
+	border-top-style: inset;
+	border-top-width: 2px;
+	border-top-color: lightgrey;
+	border-bottom-style: inset;
+	border-bottom-width: 2px;
+	border-bottom-color: lightgrey;
+	font-size: 1.2em;
+	align-self: center;
+}
+
+.current-location {
+	margin: 0;
+	background-color: darkslategray;
+	border-top-style: inset;
+	border-top-width: 2px;
+	border-top-color: lightgrey;
+	border-bottom-style: inset;
+	border-bottom-width: 2px;
+	border-bottom-color: lightgrey;
+	font-size: 1.2em;
+	align-self: center;
+}
+
+.current-table {
+	border-top-style: inset;
+	border-top-width: 2px;
+	border-top-color: lightgrey;
+	border-spacing: 0%;
+}

@@ -3,7 +3,7 @@
 	--btn-width: 85%;
 	--btn-radius: 15px;
 	--btn-weight: 800;
-	--btn-fontsize: 1.5em;
+	--btn-fontsize: 1.6em;
 }
 
 .navi-bin {
@@ -14,17 +14,15 @@
 }
 
 .navi-box {
-	display: grid;
-	grid-template-rows: 50% 50%;
-	align-content: center;
-	justify-items: center;
+	display: flex;
+	justify-content: center;
 	align-items: center;
 	background-color: darkslategrey;
 	border-style: inset;
 	border-width: 6px;
 	border-radius: 8px;
 	width: 80%;
-	height: 75%;
+	height: 45%;
 }
 
 .navi-header {
@@ -39,21 +37,6 @@
 	color: aliceblue;
 	font-style: oblique;
 	font-size: 1.5em;
-}
-
-.search {
-	height: var(--btn-height);
-	width: var(--btn-width);
-	border-radius: var(--btn-radius);
-	background-color: aquamarine;
-	font-weight: var(--btn-weight);
-	font-size: var(--btn-fontsize);
-	color: darkcyan;
-	cursor: pointer;
-}
-
-.search:hover {
-	background-color: aqua;
 }
 
 .rawdata {

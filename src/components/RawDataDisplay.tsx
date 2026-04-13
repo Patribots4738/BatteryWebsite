@@ -25,7 +25,10 @@ function RawDataDisplay() {
 		const timeArr = unFormatted.split('-');
 		const oldHour = Number(timeArr[0]);
 		let newTime;
-		const minute = Number(timeArr[1]);
+		let minute = timeArr[1];
+		if (minute.length === 1) {
+			minute = '0' + minute;
+		}
 		let formatted;
 		if (Math.sign(oldHour - 12) === -1) {
 			newTime = [oldHour, minute];
