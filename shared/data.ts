@@ -44,7 +44,7 @@ function normalizeIncomingData(data: unknown): unknown {
 	return normalized;
 }
 
-function normalizeRecentList(data: unknown): JsonData[] {
+function normalizeLists(data: unknown): JsonData[] {
 	if (Array.isArray(data)) {
 		return data.filter((item): item is JsonData => validateJsonData(item));
 	}
@@ -104,6 +104,7 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 	);
 	const recentlyUsedList = ref(db, `/recentlyUsed/`);
 	const lastChangedBattery = ref(db, '/latest/');
+	const checkedOutList = ref(db, '/checkedOut/');
 
 	const timeout = (ms: number) =>
 		new Promise((_, reject) =>
@@ -111,10 +112,10 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 		);
 
 	if (
-		canonicalData.header.movingTo.search(/Charger/) !== -1 &&
-		canonicalData.header.comingFrom.search(/Robot/) !== -1
+		canonicalData.header.comingFrom.search(/Robot/) !== -1 &&
+		canonicalData.header.movingTo.search(/Charger/) !== -1
 	) {
-		const currentList = normalizeRecentList(
+		const currentList = normalizeLists(
 			(await get(recentlyUsedList)).toJSON()
 		);
 		const list = [canonicalData, ...currentList].slice(0, 10);
@@ -126,6 +127,54 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 				errors.push(
 					new Error(
 						'Failed to update recently used batteries list' + error
+					)
+				);
+			}
+		);
+	}
+
+	if (
+		canonicalData.header.movingTo.search(/CBA/) !== -1 &&
+		canonicalData.header.movingTo.search(/Robot/) !== -1 &&
+		canonicalData.header.movingTo.search(/Other/) !== -1
+	) {
+		const checkedOut = normalizeLists((await get(checkedOutList)).toJSON());
+		const list = [canonicalData, ...checkedOut];
+		await Promise.race([set(checkedOutList, list), timeout(10000)]).catch(
+			(error) => {
+				console.error(
+					'Error updating checked out batteries list: ' + error
+				);
+				errors.push(
+					new Error(
+						'Error updating checked out batteries list: ' + error
+					)
+				);
+			}
+		);
+	}
+
+	if (
+		canonicalData.header.comingFrom.search(/CBA/) !== -1 &&
+		canonicalData.header.comingFrom.search(/Robot/) !== -1 &&
+		canonicalData.header.comingFrom.search(/Other/) !== -1 &&
+		canonicalData.header.movingTo.search(/Charger/) !== -1
+	) {
+		const checkedOut = normalizeLists((await get(checkedOutList)).toJSON());
+		let list: JsonData[] = checkedOut;
+		for (let i = 0; i < checkedOut.length; i++) {
+			if (checkedOut[i].batteryNumber === canonicalData.batteryNumber) {
+				list = checkedOut.slice(0, i).concat(checkedOut.slice(i + 1));
+			}
+		}
+		await Promise.race([set(checkedOutList, list), timeout(10000)]).catch(
+			(error) => {
+				console.error(
+					'Error updating checked out batteries list: ' + error
+				);
+				errors.push(
+					new Error(
+						'Error updating checked out batteries list: ' + error
 					)
 				);
 			}
