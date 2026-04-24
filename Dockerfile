@@ -11,10 +11,12 @@ COPY . .
 
 RUN pnpm run build
 
-ENV HOST=0.0.0.0
-ENV PORT=3000
+ARG PORT=4738
 
-EXPOSE 3000
+ENV HOST=0.0.0.0
+ENV PORT=$PORT
+
+EXPOSE $PORT
 
 CMD ["pnpm", "run", "start"]
 

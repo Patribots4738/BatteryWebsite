@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
 	};
 
 	return {
-		plugins: [react()],
+		plugins: [react({})],
 		define: {
 			'process.env': clientEnv
 		},

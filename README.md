@@ -12,9 +12,14 @@ pnpm install
 
 Run the app: `pnpm run start`
 
+When no port is specified, it will run on port 4738, or through docker is 3000.
+
 ## Docker
 
-Requires testing
+Start a new container using `docker run -p 3000:3000 batterychecker`
+The port can be changes as you like, but the ones listed below are the defaults.
+
+Default:
 
 - Frontend: `http://localhost:3000/`<br>
 - API: `http://localhost:3000/api`
