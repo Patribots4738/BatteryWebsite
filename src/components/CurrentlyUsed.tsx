@@ -11,14 +11,14 @@ function CurrentlyUsed() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				setCurrentData(await getCurrentlyUsed());
+				setCurrentData(await getCurrentlyUsed(window.location.host));
 			} catch {
 				console.log('error fetching data');
 			} finally {
 				setLoadingState(false);
 			}
 		};
-		fetchData();
+		fetchData().then(() => console.log('Data successfully loaded!'));
 	}, []);
 
 	function formatTime(timeArr: number[]) {

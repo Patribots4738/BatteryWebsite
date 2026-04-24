@@ -6,7 +6,7 @@
 		"moduleResolution": "nodenext",
 		"resolveJsonModule": true,
 		"ignoreDeprecations": "6.0",
-		"types": ["node"],
+		"types": ["node", "@types/express"],
 
 		/* Linting */
 		"noUnusedLocals": true,

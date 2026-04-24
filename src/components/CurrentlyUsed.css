@@ -16,7 +16,7 @@
 }
 
 .current-header {
-	margin: 0% 0% 1% 0%;
+	margin: 0 0 1% 0;
 	align-self: center;
 	height: fit-content;
 	width: fit-content;
@@ -81,5 +81,5 @@
 	border-top-style: inset;
 	border-top-width: 2px;
 	border-top-color: lightgrey;
-	border-spacing: 0%;
+	border-spacing: 0;
 }

@@ -1,7 +1,7 @@
 import './LatestUsed.css';
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { getLatestUsed } from '../PromisedLand';
-import { type JsonData, BatteryNames } from '../../shared/types';
+import { BatteryNames, type JsonData } from '../../shared/types';
 import LoadingData from './LoadingData';
 
 function LatestUsed() {
@@ -11,14 +11,14 @@ function LatestUsed() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				setLatestData(await getLatestUsed());
+				setLatestData(await getLatestUsed(window.location.host));
 			} catch {
 				console.log('error fetching data');
 			} finally {
 				setLoadingState(false);
 			}
 		};
-		fetchData();
+		fetchData().then(() => console.log('Data successfully loaded!'));
 	}, []);
 
 	function setUpTable(
@@ -28,7 +28,7 @@ function LatestUsed() {
 		to: string,
 		intRes: string
 	) {
-		const newRow = (
+		return (
 			<tr>
 				<td className="latestTable">B{batteryNum}</td>
 				<td className="latestTable">{batteryName}</td>
@@ -37,7 +37,6 @@ function LatestUsed() {
 				<td className="latestTable">{intRes}</td>
 			</tr>
 		);
-		return newRow;
 	}
 
 	function fixArray() {

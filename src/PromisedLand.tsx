@@ -1,16 +1,37 @@
-import { getDataFromFirebase } from '../shared/data';
-import { type JsonData, type Header } from '../shared/types';
+import {
+	type JsonData,
+	type Header,
+	type ApiResponseBody
+} from '../shared/types';
 
-// Data Retrival
+// Data Retrieval
 
-export async function getLatestUsed() {
-	return (await getDataFromFirebase('/recentlyUsed')) as JsonData[];
+export async function getLatestUsed(host: string) {
+	const prefix =
+		window.location.protocol === 'https:' ? 'https://' : 'http://';
+	return (
+		(await (
+			await fetch(`${prefix}${host}/api?path=recentlyUsed`)
+		).json()) as ApiResponseBody
+	).data as JsonData[];
 }
 
-export async function getNumData() {
-	return (await getDataFromFirebase('/num')) as object;
+export async function getNumData(host: string) {
+	const prefix =
+		window.location.protocol === 'https:' ? 'https://' : 'http://';
+	return (
+		(await (
+			await fetch(`${prefix}${host}/api?path=num`)
+		).json()) as ApiResponseBody
+	).data as object;
 }
 
-export async function getCurrentlyUsed() {
-	return (await getDataFromFirebase('/latest')) as Header;
+export async function getCurrentlyUsed(host: string) {
+	const prefix =
+		window.location.protocol === 'https:' ? 'https://' : 'http://';
+	return (
+		(await (
+			await fetch(`${prefix}${host}/api?path=latest`)
+		).json()) as ApiResponseBody
+	).data as Header;
 }

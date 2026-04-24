@@ -11,14 +11,14 @@ function RawDataDisplay() {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				setNumData(await getNumData());
+				setNumData(await getNumData(window.location.host));
 			} catch {
 				console.log('error fetching data');
 			} finally {
 				setLoadingState(false);
 			}
 		};
-		fetchData();
+		fetchData().then(() => console.log('Data successfully loaded!'));
 	}, []);
 
 	function formatTime(unFormatted: string) {

@@ -7,19 +7,22 @@ A React app built with Vite that runs an API for interacting with our data.
 Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
-Frontend development: `npm run dev:react`<br>
-Backend development: `npm run dev:server`<br>
-Fullstack development: `npm run dev:all`<br>
-Test before deploying: `npm run start`
+Run the app: `pnpm run start`
 
-## Vercel Deployment
+## Docker
 
-Everything will be deployed to Vercel, and this is primarily why `npm run start` runs the Vercel CLI.
+Requires testing
 
-- Builds can be done with `npm run build`
+- Frontend: `http://localhost:3000/`<br>
+- API: `http://localhost:3000/api`
+
+## Hosting
+
+Start using `pnpm run start`
+
 - `outputDirectory`: `dist`
 - API route is hosted at `/api`
 

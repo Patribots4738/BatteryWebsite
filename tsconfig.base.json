@@ -7,12 +7,6 @@
 		"target": "esnext",
 		"noEmit": true,
 		"baseUrl": ".",
-		"paths": {
-			"@shared": ["./shared"],
-			"@shared/*": ["./shared/*"],
-			"@api": ["./api"],
-			"@api/*": ["./api/*"]
-		},
 		"tsBuildInfoFile": "./node_modules/.tmp/tsbuildinfo"
 	}
 }

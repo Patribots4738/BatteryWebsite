@@ -1,13 +1,15 @@
-import { db } from './firebaseConfig.js';
-import { get, ref, set } from 'firebase/database';
+import { JSONFilePreset } from 'lowdb/node';
 import {
 	formatValidationIssues,
 	getJsonDataValidationIssues,
+	type DatabaseStructure,
 	type Header,
 	type JsonData,
-	validateHeader,
-	validateJsonData
-} from './types.js';
+	validateJsonData,
+	EmptyDatabase
+} from './types';
+import * as fs from 'node:fs';
+import path from 'node:path';
 
 type RawRecord = Record<string, unknown>;
 
@@ -58,16 +60,19 @@ function normalizeLists(data: unknown): JsonData[] {
 	return [];
 }
 
-export async function parseData(data: unknown): Promise<Error[] | null> {
+export async function parseData(
+	data: unknown,
+	teamNumber: number
+): Promise<Error[] | null> {
 	const errors: Error[] = [];
 	let fromRemote: unknown;
 
 	try {
-		fromRemote = normalizeIncomingData(data);
+		fromRemote = normalizeIncomingData(await data);
 	} catch (error) {
 		const errorMessage =
 			'Invalid data type received from remote: unable to parse payload';
-		console.error(errorMessage, data);
+		console.error(errorMessage, await data);
 		errors.push(
 			new Error(
 				`${errorMessage}: ${error instanceof Error ? error.message : String(error)}`
@@ -86,6 +91,11 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 		return errors;
 	}
 
+	const db = await JSONFilePreset<DatabaseStructure>(
+		checkDataFiles(teamNumber),
+		EmptyDatabase
+	);
+
 	const canonicalData = fromRemote as JsonData;
 
 	const batteryNumber: number = canonicalData.batteryNumber;
@@ -93,43 +103,25 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 	const timeString: string = `${canonicalData.header.time.hour}-${canonicalData.header.time.minute}-${canonicalData.header.time.second}`;
 	const fullDateTimeString: string = `${dateString}_${timeString}`;
 
-	const latestBatteryData = ref(db, `/num/${batteryNumber}/latest/`);
-	const headerDb = ref(
-		db,
-		`/num/${batteryNumber}/headers/${fullDateTimeString}`
-	);
-	const fullDataLocation = ref(
-		db,
-		`/allData/${batteryNumber}/${fullDateTimeString}/`
-	);
-	const recentlyUsedList = ref(db, `/recentlyUsed/`);
-	const lastChangedBattery = ref(db, '/latest/');
-	const checkedOutList = ref(db, '/checkedOut/');
+	if (!db.data.num[batteryNumber] || !db.data.num[batteryNumber].headers) {
+		db.data.num[batteryNumber] = {
+			headers: {},
+			latest: canonicalData.header
+		};
+	}
 
-	const timeout = (ms: number) =>
-		new Promise((_, reject) =>
-			setTimeout(() => reject(new Error('timeout')), ms)
-		);
+	if (!db.data.allData[batteryNumber]) {
+		db.data.allData[batteryNumber] = {};
+	}
 
 	if (
 		canonicalData.header.comingFrom.search(/Robot/) !== -1 &&
 		canonicalData.header.movingTo.search(/Charger/) !== -1
 	) {
-		const currentList = normalizeLists(
-			(await get(recentlyUsedList)).toJSON()
-		);
-		const list = [canonicalData, ...currentList].slice(0, 10);
-		await Promise.race([set(recentlyUsedList, list), timeout(10000)]).catch(
-			(error) => {
-				console.error(
-					'Error updating recently used batteries list: ' + error
-				);
-				errors.push(
-					new Error(
-						'Failed to update recently used batteries list' + error
-					)
-				);
-			}
+		// add the new data to the recently used ones
+		db.data.recentlyUsed = [canonicalData, ...db.data.recentlyUsed].slice(
+			0,
+			10
 		);
 	}
 
@@ -138,20 +130,8 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 		canonicalData.header.movingTo.search(/Robot/) !== -1 &&
 		canonicalData.header.movingTo.search(/Other/) !== -1
 	) {
-		const checkedOut = normalizeLists((await get(checkedOutList)).toJSON());
-		const list = [canonicalData, ...checkedOut];
-		await Promise.race([set(checkedOutList, list), timeout(10000)]).catch(
-			(error) => {
-				console.error(
-					'Error updating checked out batteries list: ' + error
-				);
-				errors.push(
-					new Error(
-						'Error updating checked out batteries list: ' + error
-					)
-				);
-			}
-		);
+		// update the checked out batteries list
+		db.data.checkedOut = [canonicalData, ...db.data.checkedOut];
 	}
 
 	if (
@@ -160,74 +140,29 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 		canonicalData.header.comingFrom.search(/Other/) !== -1 &&
 		canonicalData.header.movingTo.search(/Charger/) !== -1
 	) {
-		const checkedOut = normalizeLists((await get(checkedOutList)).toJSON());
+		// remove the data from the checked out batteries list
+		const checkedOut = normalizeLists(db.data.checkedOut);
 		let list: JsonData[] = checkedOut;
 		for (let i = 0; i < checkedOut.length; i++) {
 			if (checkedOut[i].batteryNumber === canonicalData.batteryNumber) {
 				list = checkedOut.slice(0, i).concat(checkedOut.slice(i + 1));
 			}
 		}
-		await Promise.race([set(checkedOutList, list), timeout(10000)]).catch(
-			(error) => {
-				console.error(
-					'Error updating checked out batteries list: ' + error
-				);
-				errors.push(
-					new Error(
-						'Error updating checked out batteries list: ' + error
-					)
-				);
-			}
-		);
+		db.data.checkedOut = list;
 	}
 
-	await Promise.race([set(headerDb, canonicalData.header), timeout(10000)])
-		.then(() => {
-			console.log('Header data pushed successfully to header database');
-		})
-		.catch((error) => {
-			console.error('Error updating header db:', error);
-			errors.push(new Error('Failed to update header database' + error));
-		});
+	// Write the header data
+	db.data.num[batteryNumber].headers[fullDateTimeString] =
+		canonicalData.header;
 
-	await Promise.race([
-		set(latestBatteryData, canonicalData.header),
-		timeout(10000)
-	])
-		.then(() => {
-			console.log('Header data set successfully to latest data');
-		})
-		.catch((error) => {
-			console.error('Error updating latest header:', error);
-			errors.push(
-				new Error('Failed to update latest header data' + error)
-			);
-		});
+	// Update latest header for this battery
+	db.data.num[batteryNumber].latest = canonicalData.header;
 
-	await Promise.race([set(fullDataLocation, canonicalData), timeout(10000)])
-		.then(() => {
-			console.log('All data pushed successfully');
-		})
-		.catch((error) => {
-			console.error('Error pushing latest data:', error);
-			errors.push(
-				new Error('Failed to push full data to database' + error)
-			);
-		});
+	// Update latest changed battery
+	db.data.latest = canonicalData.header;
 
-	await Promise.race([
-		set(lastChangedBattery, canonicalData.header),
-		timeout(10000)
-	])
-		.then(() => {
-			console.log('Latest battery data updated successfully');
-		})
-		.catch((error) => {
-			console.error('Error updating latest battery data:', error);
-			errors.push(
-				new Error('Failed to update latest battery data' + error)
-			);
-		});
+	// Write the full data to the allData section of the database
+	db.data.allData[batteryNumber][fullDateTimeString] = canonicalData;
 
 	if (errors.length > 0) {
 		for (const error of errors) {
@@ -235,38 +170,63 @@ export async function parseData(data: unknown): Promise<Error[] | null> {
 		}
 		return errors;
 	}
+
+	await db.write();
+
 	return null;
 }
 
-/**
- * Pulls data from firebase at the given path.
- * `/num` returns an array of battery numbers with all their headers and the latest one.
- * `/latest` returns Header of the latest battery that was updated.
- * `/allData/:batteryNumber/:dateTime` returns the full JsonData for a given battery and timestamp.
- * `/recentlyUsed` returns an array of the 10 most recently used batteries with their headers.
- * @param path
- * @returns Promise of a specified type. `/num` returns `object`, `/latest` returns `Header`, `/allData/:batteryNumber/:dateTime` returns `JsonData`, and `/recentlyUsed` returns `Header[]`. Pulling some other path that has data will result in an `object` of that data. Attempting to pull an unauthorized, incorrect, or bad path returns an empty object.
- */
-export async function getDataFromFirebase(
-	path: string
+export async function getData(
+	requestedPath: string,
+	teamNumber: number
 ): Promise<JsonData | JsonData[] | Header | Header[] | object> {
-	const data = (await get(ref(db, path))).toJSON();
-	if (data === null) {
+	const isValidPath = [
+		'latest',
+		'num',
+		'recentlyUsed',
+		'checkedOut'
+	].includes(requestedPath);
+	if (!isValidPath) {
+		console.error(`Invalid path requested: ${requestedPath}`);
 		return {};
 	}
-	if (validateJsonData(data)) {
-		return data as JsonData;
-	} else if (validateHeader(data)) {
-		return data as Header;
-	} else if (Array.isArray(data)) {
-		if (data.every((item) => validateHeader(item))) {
-			return data as Header[];
-		} else if (data.every((item) => validateJsonData(item))) {
-			return data as JsonData[];
-		} else {
-			return data as object;
-		}
-	} else {
-		return data as object;
+
+	const db = await JSONFilePreset<DatabaseStructure>(
+		checkDataFiles(teamNumber),
+		EmptyDatabase
+	);
+
+	switch (requestedPath) {
+		case 'latest':
+			return db.data.latest;
+		case 'num':
+			return db.data.num;
+		case 'recentlyUsed':
+			return db.data.recentlyUsed;
+		case 'checkedOut':
+			return db.data.checkedOut;
+		default:
+			return {};
 	}
+}
+
+function checkDataFiles(teamNumber: number): string {
+	const databasePath: string =
+		process.env.DATABASE_PATH === '' || !process.env.DATABASE_PATH
+			? path.join(__dirname, '../.jsonfiles/')
+			: process.env.DATABASE_PATH;
+
+	if (!fs.existsSync(`${databasePath}${teamNumber}.json`)) {
+		fs.mkdirSync(databasePath, { recursive: true });
+		fs.writeFileSync(
+			`${databasePath}${teamNumber}.json`,
+			JSON.stringify(EmptyDatabase)
+		);
+	}
+
+	if (databasePath === path.join(__dirname, '../.jsonfiles/')) {
+		console.error(`WARNING!! Using database path: ${databasePath}`);
+		console.error(`Please update the DATABASE_PATH variable ASAP!!`);
+	}
+	return databasePath + teamNumber + '.json';
 }
