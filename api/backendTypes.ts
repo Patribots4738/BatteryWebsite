@@ -38,3 +38,7 @@ export const EmptyDatabase: DatabaseStructure = {
 export type UserDatabaseStructure = {
 	[userId: string]: number;
 };
+
+export type UserIdChecking = {
+	userId: string | null;
+};

@@ -19,10 +19,9 @@
 		"**/*.{ts,tsx}": "pnpm run lint:fix"
 	},
 	"dependencies": {
-		"@sequelize/core": "7.0.0-alpha.48",
-		"@sequelize/sqlite3": "7.0.0-alpha.48",
-		"@sequelize/utils": "7.0.0-alpha.48",
-		"better-sqlite3": "^12.9.0",
+		"@types/cors": "^2.8.19",
+		"@types/express": "^5.0.6",
+		"@vitejs/plugin-react": "^6.0.1",
 		"cors": "^2.8.6",
 		"express": "^5.2.1",
 		"lowdb": "^7.0.1",
@@ -31,7 +30,11 @@
 		"supertokens-auth-react": "^0.51.2",
 		"supertokens-node": "^24.0.2",
 		"supertokens-web-js": "^0.16.0",
-		"vite-express": "^0.22.1"
+		"vite-express": "^0.22.1",
+		"husky": "^9.1.7",
+		"ts-node": "^10.9.2",
+		"typescript": "^6.0.2",
+		"vite": "^8.0.5"
 	},
 	"overrides": {
 		"typescript": "^6.0.2",
@@ -39,24 +42,16 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.4",
-		"@types/better-sqlite3": "^7.6.13",
-		"@types/cors": "^2.8.19",
-		"@types/express": "^5.0.6",
 		"@types/node": "^25.5.0",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
-		"@vitejs/plugin-react": "^6.0.1",
 		"eslint": "^9.39.4",
 		"eslint-plugin-react-hooks": "^7.0.1",
 		"eslint-plugin-react-refresh": "^0.5.2",
 		"globals": "^17.4.0",
-		"husky": "^9.1.7",
 		"lint-staged": "^16.4.0",
 		"prettier": "^3.8.1",
-		"ts-node": "^10.9.2",
-		"typescript": "^6.0.2",
-		"typescript-eslint": "^8.58.0",
-		"vite": "^8.0.5"
+		"typescript-eslint": "^8.58.0"
 	},
 	"packageManager": "pnpm@10.33.2+sha512.a90faf6feeab71ad6c6e57f94e0fe1a12f5dcc22cd754db40ae9593eb6a3e0b6b12e3540218bb37ae083404b1f2ce6db2a4121e979829b4aff94b99f49da1cf8"
 }

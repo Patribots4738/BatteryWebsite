@@ -1,5 +1,32 @@
 import { Request as ExpReq } from 'express';
 import { checkUserMembership, getData, parseData } from '../shared/data';
+import { SessionRequest } from 'supertokens-node/framework/express';
+
+function buildResponse(
+	status: number,
+	message: string,
+	data?: object,
+	errors?: string[]
+): Response {
+	return new Response(
+		data
+			? errors
+				? JSON.stringify({ status, message, data, errors })
+				: JSON.stringify({ status, message, data })
+			: errors
+				? JSON.stringify({ status, message, errors })
+				: JSON.stringify({ status, message }),
+		{
+			status: status,
+			headers: {
+				'Content-Type': 'application/json',
+				'Access-Control-Allow-Origin': '*',
+				'Access-Control-Allow-Methods': 'GET,POST',
+				'Access-Control-Allow-Headers': 'Content-Type'
+			}
+		}
+	);
+}
 
 export async function returnGETResponse(
 	request: ExpReq,
@@ -74,28 +101,11 @@ export async function returnPOSTResponse(
 	}
 }
 
-function buildResponse(
-	status: number,
-	message: string,
-	data?: object,
-	errors?: string[]
-): Response {
-	return new Response(
-		data
-			? errors
-				? JSON.stringify({ status, message, data, errors })
-				: JSON.stringify({ status, message, data })
-			: errors
-				? JSON.stringify({ status, message, errors })
-				: JSON.stringify({ status, message }),
-		{
-			status: status,
-			headers: {
-				'Content-Type': 'application/json',
-				'Access-Control-Allow-Origin': '*',
-				'Access-Control-Allow-Methods': 'GET,POST',
-				'Access-Control-Allow-Headers': 'Content-Type'
-			}
-		}
-	);
+export function checkForUserId(req: SessionRequest): string {
+	try {
+		return req.session!.getUserId();
+	} catch (e) {
+		console.error(e);
+		throw new Error('No UID found');
+	}
 }

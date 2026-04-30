@@ -1,6 +1,10 @@
-import express from 'express';
+import express, { Response } from 'express';
 import ViteExpress from 'vite-express';
-import { returnGETResponse, returnPOSTResponse } from './api/response';
+import {
+	checkForUserId,
+	returnGETResponse,
+	returnPOSTResponse
+} from './api/response';
 import cors from 'cors';
 import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
@@ -38,9 +42,9 @@ app.use(
 
 app.use(middleware());
 
-app.get('/api', async (req: SessionRequest, res) => {
-	const userId = req.session!.getUserId();
+app.get('/api', async (req: SessionRequest, res: Response) => {
 	try {
+		const userId = checkForUserId(req);
 		const response = await returnGETResponse(req, userId);
 
 		const headersObj: Record<string, string> = {};
@@ -59,15 +63,18 @@ app.get('/api', async (req: SessionRequest, res) => {
 	}
 });
 
-app.post('/api', async (req: SessionRequest, res) => {
-	const userId = req.session!.getUserId();
+app.post('/api', async (req: SessionRequest, res: Response) => {
 	try {
+		const userId = checkForUserId(req);
 		const response = await returnPOSTResponse(req, userId);
+
 		const { status, body } = response;
 		let headers: object = {};
+
 		response.headers.forEach((value, key) => {
 			headers = { ...headers, [key]: value };
 		});
+
 		console.log('Response from POST handler:', { status, headers, body });
 		res.set(headers).status(status).json(body);
 	} catch (error) {
