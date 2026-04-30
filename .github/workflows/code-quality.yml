@@ -2,7 +2,8 @@ name: Code Quality & Build
 
 on:
     push:
-        branches: [master, dev]
+        branches:
+            - '**'
     pull_request:
         branches: [master]
 
@@ -22,7 +23,7 @@ jobs:
             - name: Install pnpm
               uses: pnpm/action-setup@v3
               with:
-                  version: '10.33.0'
+                  version: '10.33.2'
 
             - name: Setup Node.js
               uses: actions/setup-node@v4

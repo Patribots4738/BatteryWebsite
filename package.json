@@ -19,17 +19,18 @@
 		"**/*.{ts,tsx}": "pnpm run lint:fix"
 	},
 	"dependencies": {
-		"@dnd-kit/core": "^6.3.1",
-		"@dnd-kit/sortable": "^10.0.0",
-		"@emotion/react": "^11.14.0",
-		"@emotion/styled": "^11.14.1",
-		"@mui/icons-material": "^7.3.9",
-		"@mui/material": "^7.3.9",
+		"@sequelize/core": "7.0.0-alpha.48",
+		"@sequelize/sqlite3": "7.0.0-alpha.48",
+		"@sequelize/utils": "7.0.0-alpha.48",
+		"better-sqlite3": "^12.9.0",
+		"cors": "^2.8.6",
 		"express": "^5.2.1",
 		"lowdb": "^7.0.1",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4",
-		"react-router-dom": "^7.14.0",
+		"supertokens-auth-react": "^0.51.2",
+		"supertokens-node": "^24.0.2",
+		"supertokens-web-js": "^0.16.0",
 		"vite-express": "^0.22.1"
 	},
 	"overrides": {
@@ -38,6 +39,7 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^9.39.4",
+		"@types/better-sqlite3": "^7.6.13",
 		"@types/cors": "^2.8.19",
 		"@types/express": "^5.0.6",
 		"@types/node": "^25.5.0",

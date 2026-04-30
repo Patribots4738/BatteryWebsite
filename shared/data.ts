@@ -1,15 +1,18 @@
-import { JSONFilePreset } from 'lowdb/node';
+import { JSONFileSyncPreset } from 'lowdb/node';
 import {
 	formatValidationIssues,
 	getJsonDataValidationIssues,
-	type DatabaseStructure,
 	type Header,
 	type JsonData,
-	validateJsonData,
-	EmptyDatabase
+	validateJsonData
 } from './types';
-import * as fs from 'node:fs';
-import path from 'node:path';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
+import {
+	DatabaseStructure,
+	EmptyDatabase,
+	UserDatabaseStructure
+} from '../api/backendTypes';
 
 type RawRecord = Record<string, unknown>;
 
@@ -60,6 +63,27 @@ function normalizeLists(data: unknown): JsonData[] {
 	return [];
 }
 
+function checkDataFiles(teamNumber: number): string {
+	const databasePath: string =
+		process.env.DATABASE_PATH === '' || !process.env.DATABASE_PATH
+			? join(__dirname, '../.db/')
+			: process.env.DATABASE_PATH;
+
+	if (!existsSync(`${databasePath}${teamNumber}.json`)) {
+		mkdirSync(databasePath, { recursive: true });
+		writeFileSync(
+			`${databasePath}${teamNumber}.json`,
+			JSON.stringify(EmptyDatabase)
+		);
+	}
+
+	if (databasePath === join(__dirname, '../.db/')) {
+		console.error(`WARNING!! Using database path: ${databasePath}`);
+		console.error(`Please update the DATABASE_PATH variable ASAP!!`);
+	}
+	return databasePath + teamNumber + '.json';
+}
+
 export async function parseData(
 	data: unknown,
 	teamNumber: number
@@ -91,7 +115,7 @@ export async function parseData(
 		return errors;
 	}
 
-	const db = await JSONFilePreset<DatabaseStructure>(
+	const db = JSONFileSyncPreset<DatabaseStructure>(
 		checkDataFiles(teamNumber),
 		EmptyDatabase
 	);
@@ -171,7 +195,7 @@ export async function parseData(
 		return errors;
 	}
 
-	await db.write();
+	db.write();
 
 	return null;
 }
@@ -191,7 +215,7 @@ export async function getData(
 		return {};
 	}
 
-	const db = await JSONFilePreset<DatabaseStructure>(
+	const db = JSONFileSyncPreset<DatabaseStructure>(
 		checkDataFiles(teamNumber),
 		EmptyDatabase
 	);
@@ -210,23 +234,29 @@ export async function getData(
 	}
 }
 
-function checkDataFiles(teamNumber: number): string {
-	const databasePath: string =
-		process.env.DATABASE_PATH === '' || !process.env.DATABASE_PATH
-			? path.join(__dirname, '../.jsonfiles/')
-			: process.env.DATABASE_PATH;
+export function checkUserMembership(userId: string): number {
+	const userMembershipPath: string =
+		process.env.MEMBERSHIP_DBPATH === '' || !process.env.MEMBERSHIP_DBPATH
+			? join(__dirname, '../.db/')
+			: process.env.MEMBERSHIP_DBPATH;
 
-	if (!fs.existsSync(`${databasePath}${teamNumber}.json`)) {
-		fs.mkdirSync(databasePath, { recursive: true });
-		fs.writeFileSync(
-			`${databasePath}${teamNumber}.json`,
-			JSON.stringify(EmptyDatabase)
-		);
+	const userMembershipDb = `${userMembershipPath}memberships.json`;
+
+	if (!existsSync(userMembershipDb)) {
+		mkdirSync(userMembershipPath, { recursive: true });
+		writeFileSync(userMembershipDb, JSON.stringify({}));
 	}
 
-	if (databasePath === path.join(__dirname, '../.jsonfiles/')) {
-		console.error(`WARNING!! Using database path: ${databasePath}`);
-		console.error(`Please update the DATABASE_PATH variable ASAP!!`);
+	const db = JSONFileSyncPreset<UserDatabaseStructure>(
+		userMembershipDb,
+		{} as UserDatabaseStructure
+	);
+
+	for (const dbId in db.data) {
+		if (dbId === userId) {
+			return db.data[dbId];
+		}
 	}
-	return databasePath + teamNumber + '.json';
+
+	return 0;
 }

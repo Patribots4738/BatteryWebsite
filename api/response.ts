@@ -1,7 +1,10 @@
 import { Request as ExpReq } from 'express';
-import { getData, parseData } from '../shared/data.ts';
+import { checkUserMembership, getData, parseData } from '../shared/data';
 
-export async function returnGETResponse(request: ExpReq): Promise<Response> {
+export async function returnGETResponse(
+	request: ExpReq,
+	userId: string
+): Promise<Response> {
 	const path = request.query['path'];
 
 	if (Array.isArray(path)) {
@@ -18,8 +21,7 @@ export async function returnGETResponse(request: ExpReq): Promise<Response> {
 	const userAgent = request.header('User-Agent') ?? 'unknown-user-agent';
 
 	try {
-		// TODO: add auth
-		const data = await getData(path, 4738);
+		const data = await getData(path, checkUserMembership(userId));
 
 		console.log(
 			`${userAgent} requested ${path}, returned ${JSON.stringify(data)}`
@@ -40,15 +42,17 @@ export async function returnGETResponse(request: ExpReq): Promise<Response> {
 	}
 }
 
-export async function returnPOSTResponse(request: ExpReq): Promise<Response> {
+export async function returnPOSTResponse(
+	request: ExpReq,
+	userId: string
+): Promise<Response> {
 	const body = await request.body;
 	console.log('Received data:', body);
 
 	if (!body) return buildResponse(400, 'No data received');
 
 	try {
-		// TODO: add auth
-		const errors = await parseData(body, 4738);
+		const errors = await parseData(body, checkUserMembership(userId));
 
 		if (!errors) {
 			return buildResponse(202, 'Data accepted, sent to backend', body);

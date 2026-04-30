@@ -1,15 +1,47 @@
 import express from 'express';
 import ViteExpress from 'vite-express';
 import { returnGETResponse, returnPOSTResponse } from './api/response';
+import cors from 'cors';
+import supertokens from 'supertokens-node';
+import Session from 'supertokens-node/recipe/session';
+import EmailPassword from 'supertokens-node/recipe/emailpassword';
+import {
+	middleware,
+	errorHandler,
+	SessionRequest
+} from 'supertokens-node/framework/express';
+
+import { supertokensConfig } from './shared/supertokensConfig';
 
 const app = express();
 const PORT = parseInt(process.env.PORT ? process.env.PORT : '4738', 10);
 
-app.use(express.json());
+supertokens.init({
+	framework: 'express',
+	supertokens: {
+		// fyi the port is correct for localhost
+		connectionURI: process.env.SUPERTOKENS_INSTANCE || 'localhost:44738',
+		apiKey: process.env.API_KEY || ''
+	},
+	appInfo: supertokensConfig,
+	recipeList: [EmailPassword.init(), Session.init()]
+});
 
-app.get('/api', async (req, res) => {
+app.use(express.json());
+app.use(
+	cors({
+		origin: supertokensConfig.websiteDomain,
+		allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
+		credentials: true
+	})
+);
+
+app.use(middleware());
+
+app.get('/api', async (req: SessionRequest, res) => {
+	const userId = req.session!.getUserId();
 	try {
-		const response = await returnGETResponse(req);
+		const response = await returnGETResponse(req, userId);
 
 		const headersObj: Record<string, string> = {};
 		response.headers.forEach((value, key) => {
@@ -27,9 +59,10 @@ app.get('/api', async (req, res) => {
 	}
 });
 
-app.post('/api', async (req, res) => {
+app.post('/api', async (req: SessionRequest, res) => {
+	const userId = req.session!.getUserId();
 	try {
-		const response = await returnPOSTResponse(req);
+		const response = await returnPOSTResponse(req, userId);
 		const { status, body } = response;
 		let headers: object = {};
 		response.headers.forEach((value, key) => {
@@ -42,6 +75,8 @@ app.post('/api', async (req, res) => {
 		res.status(500).json({ message: 'Internal Server Error' });
 	}
 });
+
+app.use(errorHandler());
 
 ViteExpress.config({
 	mode: 'production'
