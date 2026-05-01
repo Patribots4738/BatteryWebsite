@@ -6,7 +6,6 @@
 		"strict": true,
 		"target": "esnext",
 		"noEmit": true,
-		"baseUrl": ".",
 		"tsBuildInfoFile": "./node_modules/.tmp/tsbuildinfo"
 	}
 }

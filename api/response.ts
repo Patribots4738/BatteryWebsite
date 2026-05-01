@@ -1,6 +1,6 @@
-import { Request as ExpReq } from 'express';
-import { checkUserMembership, getData, parseData } from '../shared/data';
-import { SessionRequest } from 'supertokens-node/framework/express';
+import { type Request as ExpReq } from 'express';
+import { checkUserMembership, getData, parseData } from './data.ts';
+import { type SessionRequest } from 'supertokens-node/framework/express';
 
 function buildResponse(
 	status: number,

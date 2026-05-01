@@ -1,5 +1,5 @@
 import './LoadingData.css';
-import hourglassloader from '../images/hourglassloader.png';
+import hourglassLoader from '../images/hourglassLoader.png';
 
 function LoadingData() {
 	return (
@@ -8,7 +8,7 @@ function LoadingData() {
 				<h4 className="loading-text">Loading . . . . </h4>
 			</div>
 			<img
-				src={hourglassloader}
+				src={hourglassLoader}
 				alt=""
 				className="loading-animation"
 			></img>

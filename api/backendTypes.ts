@@ -1,4 +1,8 @@
-import { Header, JsonData } from '../shared/types';
+import {
+	type Header,
+	type JsonData,
+	type TruncatedJsonData
+} from '../shared/types.ts';
 
 export type DatabaseStructure = {
 	allData: {
@@ -6,7 +10,7 @@ export type DatabaseStructure = {
 			[dateTimeString: string]: JsonData;
 		};
 	};
-	latest: Header;
+	latest: TruncatedJsonData;
 	num: {
 		[batteryNumber: string]: {
 			headers: {
@@ -22,13 +26,16 @@ export type DatabaseStructure = {
 export const EmptyDatabase: DatabaseStructure = {
 	allData: {},
 	latest: {
-		date: { year: 0, month: 0, day: 0 },
-		time: { hour: 0, minute: 0, second: 0 },
-		movingTo: '',
-		comingFrom: '',
-		initialVoltage: 0,
-		charge: 0,
-		internalResistance: 0
+		batteryNumber: 0,
+		header: {
+			date: { year: 0, month: 0, day: 0 },
+			time: { hour: 0, minute: 0, second: 0 },
+			movingTo: '',
+			comingFrom: '',
+			initialVoltage: 0,
+			charge: 0,
+			internalResistance: 0
+		}
 	},
 	num: {},
 	recentlyUsed: [],
@@ -37,8 +44,4 @@ export const EmptyDatabase: DatabaseStructure = {
 
 export type UserDatabaseStructure = {
 	[userId: string]: number;
-};
-
-export type UserIdChecking = {
-	userId: string | null;
 };

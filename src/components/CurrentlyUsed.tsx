@@ -1,11 +1,14 @@
 import './CurrentlyUsed.css';
-import { getCurrentlyUsed } from '../PromisedLand';
-import { useState, useEffect } from 'react';
-import { type Header } from '../../shared/types';
+import { getCurrentlyUsed } from '../functions/PromisedLand.tsx';
+import { useEffect, useState } from 'react';
+import { type Header, type TruncatedJsonData } from '../../shared/types';
 import LoadingData from './LoadingData';
+import { formatTime } from '../functions/DataOrganization.tsx';
 
 function CurrentlyUsed() {
-	const [currentData, setCurrentData] = useState<Header>({} as Header);
+	const [currentData, setCurrentData] = useState<TruncatedJsonData>(
+		{} as TruncatedJsonData
+	);
 	const [loadingState, setLoadingState] = useState(true);
 
 	useEffect(() => {
@@ -21,37 +24,19 @@ function CurrentlyUsed() {
 		fetchData().then(() => console.log('Data successfully loaded!'));
 	}, []);
 
-	function formatTime(timeArr: number[]) {
-		const oldHour = Number(timeArr[0]);
-		let newTime;
-		let minute = timeArr[1].toString();
-		if (minute.length === 1) {
-			minute = '0' + minute;
-		}
-		let formatted;
-		if (Math.sign(oldHour - 12) === -1) {
-			newTime = [oldHour, minute];
-			formatted = newTime.join(':') + ' am';
-		} else {
-			newTime = [oldHour - 12, minute];
-			formatted = newTime.join(':') + ' pm';
-		}
-		return formatted;
-	}
-
-	function formatCurrent(
+	function formatGridElement(
 		date: string,
 		time: string,
 		from: string,
 		to: string,
-		charge: number,
-		voltage: number,
-		intRes: number
+		charge: string,
+		voltage: string,
+		intRes: string
 	) {
 		return (
 			<div className="current-grid">
 				<h4 className="identification">Battery:</h4>
-				<h4 className="dateNTime">
+				<h4 className="dateAndTime">
 					Date: {date} | Time: {time}
 				</h4>
 				<h4 className="current-location">
@@ -77,25 +62,40 @@ function CurrentlyUsed() {
 		);
 	}
 
-	function fixCurrent() {
-		const charge = currentData.charge;
-		const voltage = currentData.initialVoltage;
-		const intRes = currentData.internalResistance;
-		const from = currentData.comingFrom;
-		const to = currentData.movingTo;
-		const date = currentData.date;
-		const dateArr = [date.day, date.month, date.year];
-		const formatedDate = dateArr.join('/');
-		const time = currentData.time;
-		const formattedTime = formatTime([time.hour, time.minute]);
-		return formatCurrent(
-			formatedDate,
-			formattedTime,
-			from,
-			to,
+	function createGrid() {
+		let header: Header;
+		try {
+			header = currentData.header;
+		} catch (error) {
+			console.error(error);
+			return formatGridElement(
+				'00/0/0000',
+				'00:00:00',
+				'null',
+				'null',
+				'0',
+				'0',
+				'0'
+			);
+		}
+
+		const formattedDate = `${header.date.month}/${header.date.day}/${header.date.year}`;
+		const time = formatTime(header.time);
+
+		const charge = Number(header.charge).toFixed() as string;
+		const voltage = Number(header.initialVoltage).toFixed(3) as string;
+		const resistance = Number(header.internalResistance).toFixed(
+			3
+		) as string;
+
+		return formatGridElement(
+			formattedDate,
+			time,
+			header.comingFrom,
+			header.movingTo,
 			charge,
 			voltage,
-			intRes
+			resistance
 		);
 	}
 
@@ -103,7 +103,7 @@ function CurrentlyUsed() {
 		return (
 			<div className="current-bin">
 				<h2 className="current-header">Currently in Use</h2>
-				<div className="battery-widg">
+				<div className="battery-widget">
 					<LoadingData />
 				</div>
 			</div>
@@ -113,7 +113,7 @@ function CurrentlyUsed() {
 	return (
 		<div className="current-bin">
 			<h2 className="current-header">Currently in Use</h2>
-			<div className="battery-widg">{fixCurrent()}</div>
+			<div className="battery-widget">{createGrid()}</div>
 		</div>
 	);
 }

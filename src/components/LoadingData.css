@@ -17,13 +17,13 @@
 	overflow: hidden;
 	width: fit-content;
 	white-space: nowrap;
-	animation-name: loadingdots;
+	animation-name: loadingDots;
 	animation-duration: 0.2s;
 	animation-timing-function: steps(4);
 	animation-iteration-count: infinite;
 }
 
-@keyframes loadingdots {
+@keyframes loadingDots {
 	from {
 		width: 65%;
 	}

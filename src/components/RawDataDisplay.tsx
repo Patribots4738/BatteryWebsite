@@ -1,11 +1,17 @@
 import './RawDataDisplay.css';
-import { getNumData } from '../PromisedLand';
-import { useState, useEffect } from 'react';
-import { BatteryNames } from '../../shared/types';
+import { getNumData } from '../functions/PromisedLand.tsx';
+import { useEffect, useState } from 'react';
+import {
+	BatteryNames,
+	type NumDirectory,
+	type Date,
+	type Time
+} from '../../shared/types';
 import LoadingData from './LoadingData';
+import { formatTime } from '../functions/DataOrganization.tsx';
 
 function RawDataDisplay() {
-	const [numData, setNumData] = useState<object>({});
+	const [numData, setNumData] = useState<NumDirectory>({});
 	const [loadingState, setLoadingState] = useState<boolean>(true);
 
 	useEffect(() => {
@@ -21,46 +27,27 @@ function RawDataDisplay() {
 		fetchData().then(() => console.log('Data successfully loaded!'));
 	}, []);
 
-	function formatTime(unFormatted: string) {
-		const timeArr = unFormatted.split('-');
-		const oldHour = Number(timeArr[0]);
-		let newTime;
-		let minute = timeArr[1];
-		if (minute.length === 1) {
-			minute = '0' + minute;
-		}
-		let formatted;
-		if (Math.sign(oldHour - 12) === -1) {
-			newTime = [oldHour, minute];
-			formatted = newTime.join(':') + ' am';
-		} else {
-			newTime = [oldHour - 12, minute];
-			formatted = newTime.join(':') + ' pm';
-		}
-		return formatted;
-	}
-
-	function setUpRawTable(
+	function createNewTableEntry(
 		batteryNum: string,
 		batteryName: string,
-		datenTime: string,
+		date: Date,
+		time: Time,
 		from: string,
 		to: string,
 		charge: string,
 		voltage: string,
 		resistance: string
 	) {
-		const dntArr = datenTime.split('_');
-		const date = dntArr[0].split('-').join('/');
-		const time = formatTime(dntArr[1]);
+		const formattedDate = `${date.month}/${date.day}/${date.year}`;
+		const formattedTime = formatTime(time);
 		const location = 'From ' + from + ' To ' + to;
 		return (
 			<tr>
 				<td className="raw-body">
 					B{batteryNum} {batteryName}
 				</td>
-				<td className="raw-body">{date}</td>
-				<td className="raw-body">{time}</td>
+				<td className="raw-body">{formattedDate}</td>
+				<td className="raw-body">{formattedTime}</td>
 				<td className="raw-body">{location}</td>
 				<td className="raw-body">{charge} %</td>
 				<td className="raw-body">{voltage} V</td>
@@ -71,34 +58,43 @@ function RawDataDisplay() {
 
 	function sortData() {
 		const displayArray = [];
-		const bNums = Object.keys(numData);
-		for (let i = 0; i < bNums.length; i++) {
-			const batteryNum = bNums[i];
-			const batteryName = BatteryNames[Number(batteryNum)];
-			const headerArr = Object.values(numData)[i].headers as object;
-			const bDates = Object.keys(headerArr);
-			for (let z = 0; z < bDates.length; z++) {
-				const date = bDates[z];
-				const dateArr = Object.values(headerArr)[z];
-				const charge: string = Number(dateArr.charge).toFixed(1);
-				const voltage: string = Number(dateArr.initialVoltage).toFixed(
+
+		let batteries: string[];
+
+		try {
+			batteries = Object.keys(numData);
+		} catch (error) {
+			console.error(error);
+			return [<div></div>];
+		}
+
+		for (const batteryNumber in batteries) {
+			const batteryName = BatteryNames[Number(batteryNumber)];
+			const headers = numData[batteryNumber].headers;
+			const timestamps = Object.keys(headers);
+
+			for (const timestamp in timestamps) {
+				const header = headers[timestamp];
+
+				const charge = Number(header.charge).toFixed() as string;
+				const voltage = Number(header.initialVoltage).toFixed(
 					3
 				) as string;
-				const intRes: string = Number(
-					dateArr.internalResistance
-				).toFixed(3);
-				const from: string = dateArr.comingFrom;
-				const to: string = dateArr.movingTo;
+				const resistance = Number(header.internalResistance).toFixed(
+					3
+				) as string;
+
 				displayArray.push(
-					setUpRawTable(
-						batteryNum,
+					createNewTableEntry(
+						batteryNumber,
 						batteryName,
-						date,
-						from,
-						to,
+						header.date,
+						header.time,
+						header.comingFrom,
+						header.movingTo,
 						charge,
 						voltage,
-						intRes
+						resistance
 					)
 				);
 			}

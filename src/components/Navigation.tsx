@@ -2,8 +2,8 @@ import './Navigation.css';
 import { Component } from 'react';
 
 class Navigation extends Component {
-	naviBtns = () => {
-		const locationArr = [this.hubBtn(), this.rawDataBtn()];
+	navigationButtons = () => {
+		const locationArr = [this.hubButton(), this.rawDataButton()];
 		switch (localStorage.getItem('currentPage')) {
 			case 'hub':
 				locationArr.splice(0, 1);
@@ -17,10 +17,10 @@ class Navigation extends Component {
 		return locationArr;
 	};
 
-	rawDataBtn = () => {
+	rawDataButton = () => {
 		return (
 			<button
-				className="rawdata"
+				className="rawData"
 				onClick={() => {
 					localStorage.setItem('currentPage', 'rawData');
 					window.location.reload();
@@ -31,7 +31,7 @@ class Navigation extends Component {
 		);
 	};
 
-	hubBtn = () => {
+	hubButton = () => {
 		return (
 			<button
 				className="hub"
@@ -49,7 +49,7 @@ class Navigation extends Component {
 		return (
 			<div className="navi-bin">
 				<h2 className="navi-header"> Navigation </h2>
-				<div className="navi-box">{this.naviBtns()}</div>
+				<div className="navi-box">{this.navigationButtons()}</div>
 			</div>
 		);
 	}

@@ -1,8 +1,9 @@
 import {
 	type JsonData,
-	type Header,
-	type ApiResponseBody
-} from '../shared/types';
+	type ApiResponseBody,
+	type TruncatedJsonData,
+	type NumDirectory
+} from '../../shared/types.ts';
 
 // Data Retrieval
 
@@ -23,7 +24,7 @@ export async function getNumData(host: string) {
 		(await (
 			await fetch(`${prefix}${host}/api?path=num`)
 		).json()) as ApiResponseBody
-	).data as object;
+	).data as NumDirectory;
 }
 
 export async function getCurrentlyUsed(host: string) {
@@ -33,5 +34,5 @@ export async function getCurrentlyUsed(host: string) {
 		(await (
 			await fetch(`${prefix}${host}/api?path=latest`)
 		).json()) as ApiResponseBody
-	).data as Header;
+	).data as TruncatedJsonData;
 }

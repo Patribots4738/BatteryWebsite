@@ -1,6 +1,6 @@
 import './LatestUsed.css';
 import { useEffect, useState } from 'react';
-import { getLatestUsed } from '../PromisedLand';
+import { getLatestUsed } from '../functions/PromisedLand.tsx';
 import { BatteryNames, type JsonData } from '../../shared/types';
 import LoadingData from './LoadingData';
 

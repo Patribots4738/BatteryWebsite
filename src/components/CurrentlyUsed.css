@@ -6,7 +6,7 @@
 	align-content: center;
 }
 
-.battery-widg {
+.battery-widget {
 	background-image: url('../images/BatteryImage.jpg');
 	background-size: cover;
 	height: 80%;
@@ -51,7 +51,7 @@
 	align-self: center;
 }
 
-.dateNTime {
+.dateAndTime {
 	margin: 0;
 	background-color: darkslategray;
 	border-top-style: inset;

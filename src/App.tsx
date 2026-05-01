@@ -32,17 +32,21 @@ SuperTokens.init({
 
 export default class App extends React.Component {
 	render() {
-		//renders ui on auth route
-		if (canHandleRoute([EmailPasswordPreBuiltUI])) {
-			return getRoutingComponent([EmailPasswordPreBuiltUI]);
-		}
+		if (process.env.NODE_ENV === 'production') {
+			//renders ui on auth route
+			if (canHandleRoute([EmailPasswordPreBuiltUI])) {
+				return getRoutingComponent([EmailPasswordPreBuiltUI]);
+			}
 
-		return (
-			<SuperTokensWrapper>
-				<SessionAuth>
-					{<div className="App">{getPage()}</div>}
-				</SessionAuth>
-			</SuperTokensWrapper>
-		);
+			return (
+				<SuperTokensWrapper>
+					<SessionAuth>
+						{<div className="App">{getPage()}</div>}
+					</SessionAuth>
+				</SuperTokensWrapper>
+			);
+		} else {
+			return <div className={'App'}>{getPage()}</div>;
+		}
 	}
 }

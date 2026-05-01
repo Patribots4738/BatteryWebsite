@@ -38,7 +38,7 @@
 	font-size: 1.5em;
 }
 
-.rawdata {
+.rawData {
 	height: var(--btn-height);
 	width: var(--btn-width);
 	border-radius: var(--btn-radius);
@@ -49,7 +49,7 @@
 	cursor: pointer;
 }
 
-.rawdata:hover {
+.rawData:hover {
 	background-color: greenyellow;
 }
 

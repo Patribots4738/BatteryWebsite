@@ -360,6 +360,11 @@ export function validateJsonData(
 	return valid;
 }
 
+export interface TruncatedJsonData {
+	batteryNumber: number;
+	header: Header;
+}
+
 export function getJsonDataValidationIssues(obj: unknown): ValidationIssue[] {
 	const issues: ValidationIssue[] = [];
 	validateJsonData(obj, issues);
@@ -400,4 +405,15 @@ export type ApiResponseBody = {
 	message: string;
 	data?: object;
 	errors?: Error[];
+};
+
+export type NumData = {
+	headers: {
+		[dateAndTimeString: string]: Header;
+	};
+	latest: Header;
+};
+
+export type NumDirectory = {
+	[batteryNum: string]: NumData;
 };

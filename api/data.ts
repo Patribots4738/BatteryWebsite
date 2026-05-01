@@ -2,17 +2,17 @@ import { JSONFileSyncPreset } from 'lowdb/node';
 import {
 	formatValidationIssues,
 	getJsonDataValidationIssues,
-	type Header,
 	type JsonData,
+	type NumDirectory,
 	validateJsonData
-} from './types';
+} from '../shared/types.ts';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import {
-	DatabaseStructure,
+	type DatabaseStructure,
 	EmptyDatabase,
-	UserDatabaseStructure
-} from '../api/backendTypes';
+	type UserDatabaseStructure
+} from './backendTypes.ts';
 
 type RawRecord = Record<string, unknown>;
 
@@ -183,7 +183,10 @@ export async function parseData(
 	db.data.num[batteryNumber].latest = canonicalData.header;
 
 	// Update latest changed battery
-	db.data.latest = canonicalData.header;
+	db.data.latest = {
+		batteryNumber: canonicalData.batteryNumber,
+		header: canonicalData.header
+	};
 
 	// Write the full data to the allData section of the database
 	db.data.allData[batteryNumber][fullDateTimeString] = canonicalData;
@@ -203,7 +206,7 @@ export async function parseData(
 export async function getData(
 	requestedPath: string,
 	teamNumber: number
-): Promise<JsonData | JsonData[] | Header | Header[] | object> {
+): Promise<JsonData | JsonData[] | NumDirectory | object> {
 	const isValidPath = [
 		'latest',
 		'num',
@@ -222,15 +225,15 @@ export async function getData(
 
 	switch (requestedPath) {
 		case 'latest':
-			return db.data.latest;
+			return db.data.latest as JsonData;
 		case 'num':
-			return db.data.num;
+			return db.data.num as NumDirectory;
 		case 'recentlyUsed':
-			return db.data.recentlyUsed;
+			return db.data.recentlyUsed as JsonData[];
 		case 'checkedOut':
-			return db.data.checkedOut;
+			return db.data.checkedOut as JsonData[];
 		default:
-			return {};
+			return {} as object;
 	}
 }
 

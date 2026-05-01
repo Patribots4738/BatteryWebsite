@@ -1,10 +1,10 @@
-import express, { Response } from 'express';
+import express, { type Response } from 'express';
 import ViteExpress from 'vite-express';
 import {
 	checkForUserId,
 	returnGETResponse,
 	returnPOSTResponse
-} from './api/response';
+} from './api/response.ts';
 import cors from 'cors';
 import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
@@ -12,10 +12,10 @@ import EmailPassword from 'supertokens-node/recipe/emailpassword';
 import {
 	middleware,
 	errorHandler,
-	SessionRequest
+	type SessionRequest
 } from 'supertokens-node/framework/express';
 
-import { supertokensConfig } from './shared/supertokensConfig';
+import { supertokensConfig } from './shared/supertokensConfig.ts';
 
 const app = express();
 const PORT = parseInt(process.env.PORT ? process.env.PORT : '4738', 10);
@@ -85,9 +85,15 @@ app.post('/api', async (req: SessionRequest, res: Response) => {
 
 app.use(errorHandler());
 
-ViteExpress.config({
-	mode: 'production'
-});
+if (process.env.NODE_ENV === 'production') {
+	ViteExpress.config({
+		mode: 'production'
+	});
+} else {
+	ViteExpress.config({
+		mode: 'development'
+	});
+}
 
 ViteExpress.listen(app, PORT, () => {
 	console.log(`Server is running at http://localhost:${PORT}`);
