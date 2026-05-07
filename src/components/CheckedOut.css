@@ -1,4 +1,4 @@
-.current-bin {
+.checked-out-bin {
 	height: 100%;
 	width: 100%;
 	justify-content: center;
@@ -15,7 +15,7 @@
 	align-content: flex-end;
 }
 
-.current-header {
+.checked-out-header {
 	margin: 0 0 1% 0;
 	align-self: center;
 	height: fit-content;
@@ -29,7 +29,7 @@
 	font-size: 1.5em;
 }
 
-.current-grid {
+.checked-out-grid {
 	display: grid;
 	grid-template-rows: 20% 20% 20% 40%;
 	height: 70%;
@@ -77,7 +77,7 @@
 	align-self: center;
 }
 
-.current-table {
+.checked-out-table {
 	border-top-style: inset;
 	border-top-width: 2px;
 	border-top-color: lightgrey;

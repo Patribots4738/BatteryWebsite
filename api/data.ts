@@ -4,7 +4,9 @@ import {
 	getJsonDataValidationIssues,
 	type JsonData,
 	type NumDirectory,
-	validateJsonData
+	type TruncatedJsonData,
+	validateJsonData,
+	validateTruncatedJsonData
 } from '../shared/types.ts';
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -49,14 +51,16 @@ function normalizeIncomingData(data: unknown): unknown {
 	return normalized;
 }
 
-function normalizeLists(data: unknown): JsonData[] {
+function normalizeLists(data: unknown): TruncatedJsonData[] {
 	if (Array.isArray(data)) {
-		return data.filter((item): item is JsonData => validateJsonData(item));
+		return data.filter((item): item is TruncatedJsonData =>
+			validateTruncatedJsonData(item)
+		);
 	}
 
 	if (isRecord(data)) {
-		return Object.values(data).filter((item): item is JsonData =>
-			validateJsonData(item)
+		return Object.values(data).filter((item): item is TruncatedJsonData =>
+			validateTruncatedJsonData(item)
 		);
 	}
 
@@ -121,6 +125,10 @@ export async function parseData(
 	);
 
 	const canonicalData = fromRemote as JsonData;
+	const truncatedData = {
+		batteryNumber: canonicalData.batteryNumber,
+		header: canonicalData.header
+	} as TruncatedJsonData;
 
 	const batteryNumber: number = canonicalData.batteryNumber;
 	const dateString: string = `${canonicalData.header.date.month}-${canonicalData.header.date.day}-${canonicalData.header.date.year}`;
@@ -143,30 +151,33 @@ export async function parseData(
 		canonicalData.header.movingTo.search(/Charger/) !== -1
 	) {
 		// add the new data to the recently used ones
-		db.data.recentlyUsed = [canonicalData, ...db.data.recentlyUsed].slice(
-			0,
-			10
-		);
+		const recentlyUsed = normalizeLists(db.data.recentlyUsed);
+		const list: DatabaseStructure['recentlyUsed'] = [
+			truncatedData,
+			...recentlyUsed
+		];
+		db.data.recentlyUsed = list.slice(0, 10);
 	}
 
 	if (
-		canonicalData.header.movingTo.search(/CBA/) !== -1 &&
-		canonicalData.header.movingTo.search(/Robot/) !== -1 &&
+		canonicalData.header.movingTo.search(/CBA/) !== -1 ||
+		canonicalData.header.movingTo.search(/Robot/) !== -1 ||
 		canonicalData.header.movingTo.search(/Other/) !== -1
 	) {
 		// update the checked out batteries list
-		db.data.checkedOut = [canonicalData, ...db.data.checkedOut];
+		const checkedOut = normalizeLists(db.data.checkedOut);
+		db.data.checkedOut = [truncatedData, ...checkedOut];
 	}
 
 	if (
-		canonicalData.header.comingFrom.search(/CBA/) !== -1 &&
-		canonicalData.header.comingFrom.search(/Robot/) !== -1 &&
-		canonicalData.header.comingFrom.search(/Other/) !== -1 &&
+		(canonicalData.header.comingFrom.search(/CBA/) !== -1 ||
+			canonicalData.header.comingFrom.search(/Robot/) !== -1 ||
+			canonicalData.header.comingFrom.search(/Other/) !== -1) &&
 		canonicalData.header.movingTo.search(/Charger/) !== -1
 	) {
 		// remove the data from the checked out batteries list
 		const checkedOut = normalizeLists(db.data.checkedOut);
-		let list: JsonData[] = checkedOut;
+		let list: DatabaseStructure['checkedOut'] = checkedOut;
 		for (let i = 0; i < checkedOut.length; i++) {
 			if (checkedOut[i].batteryNumber === canonicalData.batteryNumber) {
 				list = checkedOut.slice(0, i).concat(checkedOut.slice(i + 1));
@@ -183,10 +194,7 @@ export async function parseData(
 	db.data.num[batteryNumber].latest = canonicalData.header;
 
 	// Update latest changed battery
-	db.data.latest = {
-		batteryNumber: canonicalData.batteryNumber,
-		header: canonicalData.header
-	};
+	db.data.latest = truncatedData;
 
 	// Write the full data to the allData section of the database
 	db.data.allData[batteryNumber][fullDateTimeString] = canonicalData;
@@ -204,20 +212,9 @@ export async function parseData(
 }
 
 export async function getData(
-	requestedPath: string,
+	requestedPath: 'latest' | 'num' | 'checkedOut' | 'recentlyUsed',
 	teamNumber: number
-): Promise<JsonData | JsonData[] | NumDirectory | object> {
-	const isValidPath = [
-		'latest',
-		'num',
-		'recentlyUsed',
-		'checkedOut'
-	].includes(requestedPath);
-	if (!isValidPath) {
-		console.error(`Invalid path requested: ${requestedPath}`);
-		return {};
-	}
-
+) {
 	const db = JSONFileSyncPreset<DatabaseStructure>(
 		checkDataFiles(teamNumber),
 		EmptyDatabase
@@ -225,15 +222,15 @@ export async function getData(
 
 	switch (requestedPath) {
 		case 'latest':
-			return db.data.latest as JsonData;
+			return db.data.latest as TruncatedJsonData;
 		case 'num':
 			return db.data.num as NumDirectory;
 		case 'recentlyUsed':
-			return db.data.recentlyUsed as JsonData[];
+			return db.data.recentlyUsed as TruncatedJsonData[];
 		case 'checkedOut':
-			return db.data.checkedOut as JsonData[];
+			return db.data.checkedOut as TruncatedJsonData[];
 		default:
-			return {} as object;
+			return {};
 	}
 }
 

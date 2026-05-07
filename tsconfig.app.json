@@ -9,7 +9,7 @@
 		"useDefineForClassFields": true,
 		"verbatimModuleSyntax": true,
 		"moduleDetection": "force",
-		"types": ["vite/client"],
+		"types": ["vite/client", "node"],
 
 		/* Linting */
 		"noUnusedLocals": true,

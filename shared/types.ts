@@ -315,17 +315,16 @@ export function validateDatapoints(
 	return valid;
 }
 
-export interface JsonData {
+export interface TruncatedJsonData {
 	batteryNumber: number;
 	header: Header;
-	datapoints: Datapoints;
 }
 
-export function validateJsonData(
+export function validateTruncatedJsonData(
 	obj: unknown,
 	issues?: ValidationIssue[],
-	path = 'jsonData'
-): obj is JsonData {
+	path = 'truncatedJsonData'
+): obj is TruncatedJsonData {
 	if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
 		addIssue(
 			issues,
@@ -360,9 +359,25 @@ export function validateJsonData(
 	return valid;
 }
 
-export interface TruncatedJsonData {
+export interface JsonData {
 	batteryNumber: number;
 	header: Header;
+	datapoints: Datapoints;
+}
+
+export function validateJsonData(
+	obj: unknown,
+	issues?: ValidationIssue[],
+	path = 'jsonData'
+): obj is JsonData {
+	const record = obj as Record<string, unknown>;
+	let isValid = validateTruncatedJsonData(record, issues, path);
+
+	if (!validateDatapoints(record.datapoints, issues, `${path}.datapoints`)) {
+		isValid = false;
+	}
+
+	return isValid;
 }
 
 export function getJsonDataValidationIssues(obj: unknown): ValidationIssue[] {
@@ -400,13 +415,6 @@ export const BatteryNames: Record<number, string> = {
 	26: 'Bowser'
 };
 
-export type ApiResponseBody = {
-	status: number;
-	message: string;
-	data?: object;
-	errors?: Error[];
-};
-
 export type NumData = {
 	headers: {
 		[dateAndTimeString: string]: Header;
@@ -417,3 +425,19 @@ export type NumData = {
 export type NumDirectory = {
 	[batteryNum: string]: NumData;
 };
+
+export interface SocketResponseTypes {
+	checkedOut: (
+		userId: string,
+		callback: (res: TruncatedJsonData[]) => void
+	) => void;
+	latest: (
+		userId: string,
+		callback: (res: TruncatedJsonData) => void
+	) => void;
+	num: (userId: string, callback: (res: NumDirectory) => void) => void;
+	recentlyUsed: (
+		userId: string,
+		callback: (res: TruncatedJsonData[]) => void
+	) => void;
+}

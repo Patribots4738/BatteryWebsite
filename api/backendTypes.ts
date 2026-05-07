@@ -19,8 +19,8 @@ export type DatabaseStructure = {
 			latest: Header;
 		};
 	};
-	recentlyUsed: JsonData[];
-	checkedOut: JsonData[];
+	recentlyUsed: TruncatedJsonData[];
+	checkedOut: TruncatedJsonData[];
 };
 
 export const EmptyDatabase: DatabaseStructure = {

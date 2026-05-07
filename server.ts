@@ -10,12 +10,19 @@ import supertokens from 'supertokens-node';
 import Session from 'supertokens-node/recipe/session';
 import EmailPassword from 'supertokens-node/recipe/emailpassword';
 import {
-	middleware,
 	errorHandler,
+	middleware,
 	type SessionRequest
 } from 'supertokens-node/framework/express';
+import { Server } from 'socket.io';
 
 import { supertokensConfig } from './shared/supertokensConfig.ts';
+import {
+	NumDirectory,
+	SocketResponseTypes,
+	TruncatedJsonData
+} from './shared/types.ts';
+import { checkUserMembership, getData } from './api/data.ts';
 
 const app = express();
 const PORT = parseInt(process.env.PORT ? process.env.PORT : '4738', 10);
@@ -95,6 +102,56 @@ if (process.env.NODE_ENV === 'production') {
 	});
 }
 
-ViteExpress.listen(app, PORT, () => {
+const server = ViteExpress.listen(app, PORT, () => {
 	console.log(`Server is running at http://localhost:${PORT}`);
+});
+
+const io = new Server<SocketResponseTypes>(server, {
+	cors: {
+		origin: supertokensConfig.websiteDomain,
+		methods: ['GET', 'POST'],
+		allowedHeaders: ['content-type', ...supertokens.getAllCORSHeaders()],
+		credentials: true
+	}
+});
+
+io.on('connection', (socket) => {
+	console.log('New user connected:', socket.id);
+
+	socket.on('latest', async (userId, callback) => {
+		callback(
+			(await getData(
+				'latest',
+				checkUserMembership(userId)
+			)) as TruncatedJsonData
+		);
+	});
+
+	socket.on('num', async (userId, callback) => {
+		callback(
+			(await getData('num', checkUserMembership(userId))) as NumDirectory
+		);
+	});
+
+	socket.on('recentlyUsed', async (userId, callback) => {
+		callback(
+			(await getData(
+				'recentlyUsed',
+				checkUserMembership(userId)
+			)) as TruncatedJsonData[]
+		);
+	});
+
+	socket.on('checkedOut', async (userId, callback) => {
+		callback(
+			(await getData(
+				'checkedOut',
+				checkUserMembership(userId)
+			)) as TruncatedJsonData[]
+		);
+	});
+
+	socket.on('disconnect', () => {
+		console.log('User disconnected:', socket.id);
+	});
 });

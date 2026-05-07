@@ -2,7 +2,7 @@ import './HubPage.css';
 import { Component } from 'react';
 import LatestUsed from '../components/LatestUsed';
 import Navigation from '../components/Navigation';
-import CurrentlyUsed from '../components/CurrentlyUsed';
+import CheckedOut from '../components/CheckedOut';
 
 class HubPage extends Component {
 	render() {
@@ -13,7 +13,7 @@ class HubPage extends Component {
 				</div>
 				<div className="battery">Battery Chart Work in Progress 👍</div>
 				<div className="current">
-					<CurrentlyUsed />
+					<CheckedOut />
 				</div>
 				<div className="blast">Blast Charger Work in Progress 👍</div>
 				<div className="latest">

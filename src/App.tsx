@@ -10,6 +10,8 @@ import HubPage from './pages/HubPage';
 import SearchPage from './pages/SearchPage';
 import RawDataPage from './pages/RawDataPage';
 import { supertokensConfig } from '../shared/supertokensConfig';
+import { socket } from './Socket';
+import { SocketContext } from './context/SocketContext';
 
 function getPage() {
 	switch (localStorage.getItem('currentPage')) {
@@ -31,22 +33,36 @@ SuperTokens.init({
 });
 
 export default class App extends React.Component {
+	componentDidMount() {
+		socket.connect();
+	}
+
+	componentWillUnmount() {
+		socket.disconnect();
+	}
+
 	render() {
-		if (process.env.NODE_ENV === 'production') {
+		if (import.meta.env.PROD) {
 			//renders ui on auth route
 			if (canHandleRoute([EmailPasswordPreBuiltUI])) {
 				return getRoutingComponent([EmailPasswordPreBuiltUI]);
 			}
 
 			return (
-				<SuperTokensWrapper>
-					<SessionAuth>
-						{<div className="App">{getPage()}</div>}
-					</SessionAuth>
-				</SuperTokensWrapper>
+				<SocketContext.Provider value={socket}>
+					<SuperTokensWrapper>
+						<SessionAuth>
+							{<div className="App">{getPage()}</div>}
+						</SessionAuth>
+					</SuperTokensWrapper>
+				</SocketContext.Provider>
 			);
 		} else {
-			return <div className={'App'}>{getPage()}</div>;
+			return (
+				<SocketContext.Provider value={socket}>
+					<div className={'App'}>{getPage()}</div>
+				</SocketContext.Provider>
+			);
 		}
 	}
 }

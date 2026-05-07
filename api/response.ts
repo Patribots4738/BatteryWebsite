@@ -43,6 +43,13 @@ export async function returnGETResponse(
 		return buildResponse(400, 'Invalid path parameter: expected a string');
 	} else if (path === '' || !path || path.trim() === '') {
 		return buildResponse(200, 'Server OK, no data requested');
+	} else if (
+		path !== 'num' &&
+		path !== 'recentlyUsed' &&
+		path !== 'checkedOut' &&
+		path !== 'latest'
+	) {
+		return buildResponse(400, 'Invalid path parameter: invalid path');
 	}
 
 	const userAgent = request.header('User-Agent') ?? 'unknown-user-agent';

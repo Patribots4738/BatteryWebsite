@@ -1,31 +1,45 @@
 import './RawDataDisplay.css';
-import { getNumData } from '../functions/PromisedLand.tsx';
 import { useEffect, useState } from 'react';
+import { useSessionContext } from 'supertokens-auth-react/recipe/session';
 import {
 	BatteryNames,
-	type NumDirectory,
 	type Date,
+	type NumDirectory,
 	type Time
 } from '../../shared/types';
 import LoadingData from './LoadingData';
 import { formatTime } from '../functions/DataOrganization.tsx';
+import { useSocket } from '../context/SocketContext.tsx';
 
 function RawDataDisplay() {
 	const [numData, setNumData] = useState<NumDirectory>({});
 	const [loadingState, setLoadingState] = useState<boolean>(true);
 
+	const session = useSessionContext();
+	const socket = useSocket();
+
 	useEffect(() => {
 		const fetchData = async () => {
+			if (session.loading) return;
+
+			const userId = session.userId;
+
+			if (!userId) {
+				setLoadingState(false);
+				return;
+			}
+
 			try {
-				setNumData(await getNumData(window.location.host));
+				setNumData(await socket.emitWithAck('num', userId));
 			} catch {
 				console.log('error fetching data');
 			} finally {
 				setLoadingState(false);
 			}
 		};
+
 		fetchData().then(() => console.log('Data successfully loaded!'));
-	}, []);
+	}, [socket, session]);
 
 	function createNewTableEntry(
 		batteryNum: string,

@@ -1,25 +1,39 @@
 import './LatestUsed.css';
 import { useEffect, useState } from 'react';
-import { getLatestUsed } from '../functions/PromisedLand.tsx';
-import { BatteryNames, type JsonData } from '../../shared/types';
+import { BatteryNames, type TruncatedJsonData } from '../../shared/types';
 import LoadingData from './LoadingData';
+import { useSocket } from '../context/SocketContext.tsx';
+import { useSessionContext } from 'supertokens-auth-react/recipe/session';
 
 function LatestUsed() {
-	const [latestData, setLatestData] = useState<JsonData[]>([]);
+	const [latestData, setLatestData] = useState<TruncatedJsonData[]>([]);
 	const [loadingState, setLoadingState] = useState(true);
+
+	const session = useSessionContext();
+	const socket = useSocket();
 
 	useEffect(() => {
 		const fetchData = async () => {
+			if (session.loading) return;
+
+			const userId = session.userId;
+
+			if (!userId) {
+				setLoadingState(false);
+				return;
+			}
+
 			try {
-				setLatestData(await getLatestUsed(window.location.host));
+				setLatestData(await socket.emitWithAck('recentlyUsed', userId));
 			} catch {
 				console.log('error fetching data');
 			} finally {
 				setLoadingState(false);
 			}
 		};
+
 		fetchData().then(() => console.log('Data successfully loaded!'));
-	}, []);
+	}, [socket, session]);
 
 	function setUpTable(
 		batteryNum: string,
