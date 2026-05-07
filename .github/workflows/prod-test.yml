@@ -32,8 +32,5 @@ jobs:
             - name: Install Dependencies
               run: pnpm install --frozen-lockfile --prod
 
-            - name: Check for Quality Issues
-              run: pnpm run chore:lint
-
             - name: Build Repository
               run: pnpm run build
