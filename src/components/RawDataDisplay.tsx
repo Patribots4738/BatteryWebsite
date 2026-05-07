@@ -1,6 +1,5 @@
 import './RawDataDisplay.css';
 import { useEffect, useState } from 'react';
-import { useSessionContext } from 'supertokens-auth-react/recipe/session';
 import {
 	BatteryNames,
 	type Date,
@@ -10,12 +9,13 @@ import {
 import LoadingData from './LoadingData';
 import { formatTime } from '../functions/DataOrganization.tsx';
 import { useSocket } from '../context/SocketContext.tsx';
+import { DevSessionContext } from '../context/DevSessionContext';
 
 function RawDataDisplay() {
 	const [numData, setNumData] = useState<NumDirectory>({});
 	const [loadingState, setLoadingState] = useState<boolean>(true);
 
-	const session = useSessionContext();
+	const session = DevSessionContext();
 	const socket = useSocket();
 
 	useEffect(() => {
@@ -39,7 +39,7 @@ function RawDataDisplay() {
 		};
 
 		fetchData().then(() => console.log('Data successfully loaded!'));
-	}, [socket, session]);
+	}, [socket, session.userId, session.loading]);
 
 	function createNewTableEntry(
 		batteryNum: string,

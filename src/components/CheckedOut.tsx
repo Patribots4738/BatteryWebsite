@@ -1,17 +1,17 @@
-import './CurrentlyUsed.css';
+import './CheckedOut.css';
 import { useEffect, useState } from 'react';
 import { type TruncatedJsonData } from '../../shared/types';
 import LoadingData from './LoadingData';
 import { formatTime } from '../functions/DataOrganization.tsx';
 import { useSocket } from '../context/SocketContext.tsx';
 import type { JSX } from 'react/jsx-runtime';
-import { useSessionContext } from 'supertokens-auth-react/recipe/session';
+import { DevSessionContext } from '../context/DevSessionContext';
 
 function CheckedOut() {
 	const [currentData, setCurrentData] = useState<TruncatedJsonData[]>([]);
 	const [loadingState, setLoadingState] = useState(true);
 
-	const session = useSessionContext();
+	const session = DevSessionContext();
 	const socket = useSocket();
 
 	useEffect(() => {
@@ -35,7 +35,7 @@ function CheckedOut() {
 		};
 
 		fetchData().then(() => console.log('Data successfully loaded!'));
-	}, [socket, session]);
+	}, [socket, session.userId, session.loading]);
 
 	function formatGridElement(
 		date: string,

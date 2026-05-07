@@ -18,9 +18,9 @@ import { Server } from 'socket.io';
 
 import { supertokensConfig } from './shared/supertokensConfig.ts';
 import {
-	NumDirectory,
-	SocketResponseTypes,
-	TruncatedJsonData
+	type NumDirectory,
+	type SocketResponseTypes,
+	type TruncatedJsonData
 } from './shared/types.ts';
 import { checkUserMembership, getData } from './api/data.ts';
 
@@ -92,15 +92,15 @@ app.post('/api', async (req: SessionRequest, res: Response) => {
 
 app.use(errorHandler());
 
-if (process.env.NODE_ENV === 'production') {
-	ViteExpress.config({
-		mode: 'production'
-	});
-} else {
-	ViteExpress.config({
-		mode: 'development'
-	});
-}
+const isProduction = process.env.NODE_ENV === 'production';
+console.log(
+	`\nStarting in ${isProduction ? 'PRODUCTION' : 'DEVELOPMENT'} mode\n`
+);
+
+ViteExpress.config({
+	mode: isProduction ? 'production' : 'development',
+	ignorePaths: /[\\/]node_modules[\\/]/
+});
 
 const server = ViteExpress.listen(app, PORT, () => {
 	console.log(`Server is running at http://localhost:${PORT}`);

@@ -3,13 +3,13 @@ import { useEffect, useState } from 'react';
 import { BatteryNames, type TruncatedJsonData } from '../../shared/types';
 import LoadingData from './LoadingData';
 import { useSocket } from '../context/SocketContext.tsx';
-import { useSessionContext } from 'supertokens-auth-react/recipe/session';
+import { DevSessionContext } from '../context/DevSessionContext';
 
 function LatestUsed() {
 	const [latestData, setLatestData] = useState<TruncatedJsonData[]>([]);
 	const [loadingState, setLoadingState] = useState(true);
 
-	const session = useSessionContext();
+	const session = DevSessionContext();
 	const socket = useSocket();
 
 	useEffect(() => {
@@ -33,7 +33,7 @@ function LatestUsed() {
 		};
 
 		fetchData().then(() => console.log('Data successfully loaded!'));
-	}, [socket, session]);
+	}, [socket, session.userId, session.loading]);
 
 	function setUpTable(
 		batteryNum: string,

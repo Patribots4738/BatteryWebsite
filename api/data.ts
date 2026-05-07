@@ -17,6 +17,7 @@ import {
 } from './backendTypes.ts';
 
 type RawRecord = Record<string, unknown>;
+const __dirname = import.meta.dirname;
 
 function isRecord(value: unknown): value is RawRecord {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -244,7 +245,12 @@ export function checkUserMembership(userId: string): number {
 
 	if (!existsSync(userMembershipDb)) {
 		mkdirSync(userMembershipPath, { recursive: true });
-		writeFileSync(userMembershipDb, JSON.stringify({}));
+		writeFileSync(
+			userMembershipDb,
+			JSON.stringify({
+				team0: 0
+			})
+		);
 	}
 
 	const db = JSONFileSyncPreset<UserDatabaseStructure>(
