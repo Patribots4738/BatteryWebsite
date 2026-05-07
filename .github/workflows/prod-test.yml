@@ -1,4 +1,4 @@
-name: Code Quality & Build
+name: Build in Production Environment
 
 on:
     push:
@@ -10,8 +10,6 @@ on:
 jobs:
     validate-and-deploy:
         runs-on: ubuntu-latest
-        permissions:
-            contents: write
 
         steps:
             - name: Checkout Code
@@ -32,21 +30,10 @@ jobs:
                   cache: 'pnpm'
 
             - name: Install Dependencies
-              run: pnpm install --frozen-lockfile
+              run: pnpm install --frozen-lockfile --prod
 
-            - name: Pre-linting build
-              run: pnpm run build
-
-            - name: Execute Auto-Fixes
-              run: pnpm run chore:format
-
-            - name: Post-linting build
-              run: pnpm run build
-
-            - name: Verify Remaining Issues
+            - name: Check for Quality Issues
               run: pnpm run chore:lint
 
-            - name: Commit Fixed Files
-              uses: stefanzweifel/git-auto-commit-action@v5
-              with:
-                  commit_message: 'chore: automated lint fixes [skip ci]'
+            - name: Build Repository
+              run: pnpm run build
