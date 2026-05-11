@@ -5,6 +5,8 @@
 		"skipLibCheck": true,
 		"strict": true,
 		"target": "esnext",
+		"module": "esnext",
+		"moduleResolution": "nodenext",
 		"noEmit": true,
 		"baseUrl": ".",
 		"paths": {
