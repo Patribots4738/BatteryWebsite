@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"experimentalDecorators": true
+		"moduleResolution": "nodenext"
 	},
 	"extends": "../tsconfig.server.json",
 	"include": ["./*.ts"]
